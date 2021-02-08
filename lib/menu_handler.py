@@ -3,6 +3,9 @@ import lib.redis_handler as Redis
 import lib.rabbitmq_handler as Rabbit
 import lib.varnish_handler as Varnish
 import lib.cron_handler as Cron
+import lib.cache_handler as Cache
+import sys
+
 
 def main_menu(config, path):
     choice = '0'
@@ -12,10 +15,16 @@ def main_menu(config, path):
         print(Colors.OKGREEN + "=>" + Colors.WARNING + " 2. " + Colors.OKBLUE + "RabbitMQ" + Colors.ENDC)
         print(Colors.OKGREEN + "=>" + Colors.WARNING + " 3. " + Colors.OKBLUE + "Varnish" + Colors.ENDC)
         print(Colors.OKGREEN + "=>" + Colors.WARNING + " 4. " + Colors.OKBLUE + "Cron" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 5. " + Colors.OKBLUE + "Caches/Autoscaling" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 6. " + Colors.OKBLUE + "Exit" + Colors.ENDC)
 
         choice = input(Colors.WARNING + "Choose Menu Item: " + Colors.ENDC)
 
-        if choice == "4":
+        if choice == "6":
+            sys.exit()
+        elif choice == "5":
+            cache_menu(config, path)
+        elif choice == "4":
             cron_menu(config, path)
         elif choice == "3":
             varnish_menu(config, path)
@@ -86,6 +95,7 @@ def varnish_menu(config, path):
             print("I don't understand your choice.")
             varnish_menu(config, path)
 
+
 def cron_menu(config, path):
     choice = '0'
     while choice == '0':
@@ -104,3 +114,37 @@ def cron_menu(config, path):
             Cron.install_mmcron(config, path)
         else:
             print("I don't understand your choice.")
+
+
+def cache_menu(config, path):
+    choice = '0'
+    while choice == '0':
+        print(Colors.OKGREEN + "++++++=> " + Colors.OKBLUE + "MMTK v1 Cache Menu:" + Colors.OKGREEN + " <=++++++" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 1. " + Colors.OKBLUE + "Clear All Cache" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 2. " + Colors.OKBLUE + "Clear Magento Cache" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 3. " + Colors.OKBLUE + "Clear Redis Cache" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 4. " + Colors.OKBLUE + "Clear Cloudfront Cache" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 5. " + Colors.OKBLUE + "Autoscaling Reinit" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 6. " + Colors.OKBLUE + "Autoscaling Zero Downtime Reinit" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 7. " + Colors.OKBLUE + "Back" + Colors.ENDC)
+
+        choice = input(Colors.WARNING + "Choose Menu Item: " + Colors.ENDC)
+
+        if choice == "7":
+            main_menu(config, path)
+        elif choice == "6":
+            Cache.reinit_as_zdd(config, path)
+        elif choice == "5":
+            Cache.reinit_as(config, path)
+        elif choice == "4":
+            Cache.clear_cloudfront(config, path)
+        elif choice == "3":
+            Cache.clear_redis(config, path)
+        elif choice == "2":
+            Cache.clear_magento(config, path)
+        elif choice == "1":
+            Cache.clear_all(config, path)
+
+        else:
+            print("I don't understand your choice.")
+            redis_menu(config, path)

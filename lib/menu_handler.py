@@ -16,7 +16,7 @@ def main_menu(config, path):
         choice = input(Colors.WARNING + "Choose Menu Item: " + Colors.ENDC)
 
         if choice == "4":
-            print("Do Something 4")
+            cron_menu(config, path)
         elif choice == "3":
             varnish_menu(config, path)
         elif choice == "2":

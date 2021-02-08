@@ -9,7 +9,7 @@ def install_mmcron(config, path):
     os.popen("php " + path + "/bin/magento module:enable MageMojo_Cron").read()
     os.popen("php " + path + "/bin/magento setup:upgrade").read()
     os.popen("php " + path + "/bin/magento setup:di:compile").read()
-    os.popen("php " + path + "/bin/magento setup:static-content:deploy").read()
+    os.popen("php " + path + "/bin/magento setup:static-content:deploy -f").read()
     print(Colors.OKGREEN + "MageMojo Cron Installed" + Colors.ENDC)
     Menu.main_menu(config, path)
 

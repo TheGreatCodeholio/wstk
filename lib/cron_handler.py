@@ -5,7 +5,7 @@ import os
 
 
 def install_mmcron(config, path):
-    os.popen("cd /srv && composer require magemojo/m2-ce-cron").read()
+    os.popen("cd " + path + " && composer require magemojo/m2-ce-cron").read()
     os.popen("php " + path + "/bin/magento module:enable MageMojo_Cron").read()
     os.popen("php " + path + "/bin/magento setup:upgrade").read()
     os.popen("php " + path + "/bin/magento setup:di:compile").read()

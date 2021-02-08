@@ -1,5 +1,6 @@
 import lib.text_color as Color
 import lib.redis_handler as Redis
+import lib.rabbitmq_handler as Rabbit
 
 def main_menu(config, path):
     choice = '0'
@@ -17,7 +18,7 @@ def main_menu(config, path):
         elif choice == "3":
             print("Do Something 2")
         elif choice == "2":
-            print("Do Something 2")
+            rabbit_menu(config, path)
         elif choice == "1":
             redis_menu(config, path)
         else:
@@ -42,3 +43,20 @@ def redis_menu(config, path):
         else:
             print("I don't understand your choice.")
             redis_menu(config, path)
+
+def rabbit_menu(config, path):
+    choice = '0'
+    while choice == '0':
+        print(Color.Colors.OKGREEN + "++++++=> " + Color.Colors.OKBLUE + "MMTK v1 RabbitmQ Menu:" + Color.Colors.OKGREEN + " <=++++++" + Color.Colors.ENDC)
+        print(Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 1. " + Color.Colors.OKBLUE + "Configure RabbitMQ" + Color.Colors.ENDC)
+        print(Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 2. " + Color.Colors.OKBLUE + "Back" + Color.Colors.ENDC)
+
+        choice = input("Choose Menu Item: ")
+
+        if choice == "2":
+            main_menu(config, path)
+        elif choice == "1":
+            Rabbit.check_rabbitmq(config, path)
+        else:
+            print("I don't understand your choice.")
+            rabbit_menu(config, path)

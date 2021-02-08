@@ -1,29 +1,24 @@
-import lib.text_color as Color
+from lib.text_color import Colors
 import lib.redis_handler as Redis
 import lib.rabbitmq_handler as Rabbit
 import lib.varnish_handler as Varnish
-
+import lib.cron_handler as Cron
 
 def main_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(
-            Color.Colors.OKGREEN + "++++++=> " + Color.Colors.OKBLUE + "MMTK v1 Main Menu:" + Color.Colors.OKGREEN + " <=++++++" + Color.Colors.ENDC)
-        print(
-            Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 1. " + Color.Colors.OKBLUE + "Redis" + Color.Colors.ENDC)
-        print(
-            Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 2. " + Color.Colors.OKBLUE + "RabbitMQ" + Color.Colors.ENDC)
-        print(
-            Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 3. " + Color.Colors.OKBLUE + "Varnish" + Color.Colors.ENDC)
-        print(
-            Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 4. " + Color.Colors.OKBLUE + "Cron" + Color.Colors.ENDC)
+        print(Colors.OKGREEN + "++++++=> " + Colors.OKBLUE + "MMTK v1 Main Menu:" + Colors.OKGREEN + " <=++++++" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 1. " + Colors.OKBLUE + "Redis" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 2. " + Colors.OKBLUE + "RabbitMQ" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 3. " + Colors.OKBLUE + "Varnish" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 4. " + Colors.OKBLUE + "Cron" + Colors.ENDC)
 
-        choice = input(Color.Colors.WARNING + "Choose Menu Item: ")
+        choice = input(Colors.WARNING + "Choose Menu Item: " + Colors.ENDC)
 
         if choice == "4":
             print("Do Something 4")
         elif choice == "3":
-            print("Do Something 2")
+            varnish_menu(config, path)
         elif choice == "2":
             rabbit_menu(config, path)
         elif choice == "1":
@@ -35,16 +30,12 @@ def main_menu(config, path):
 def redis_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(
-            Color.Colors.OKGREEN + "++++++=> " + Color.Colors.OKBLUE + "MMTK v1 Redis Menu:" + Color.Colors.OKGREEN + " <=++++++" + Color.Colors.ENDC)
-        print(
-            Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 1. " + Color.Colors.OKBLUE + "Configure Redis Sessions" + Color.Colors.ENDC)
-        print(
-            Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 2. " + Color.Colors.OKBLUE + "Configure Redis Cache" + Color.Colors.ENDC)
-        print(
-            Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 3. " + Color.Colors.OKBLUE + "Back" + Color.Colors.ENDC)
+        print(Colors.OKGREEN + "++++++=> " + Colors.OKBLUE + "MMTK v1 Redis Menu:" + Colors.OKGREEN + " <=++++++" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 1. " + Colors.OKBLUE + "Configure Redis Sessions" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 2. " + Colors.OKBLUE + "Configure Redis Cache" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 3. " + Colors.OKBLUE + "Back" + Colors.ENDC)
 
-        choice = input("Choose Menu Item: ")
+        choice = input(Colors.WARNING + "Choose Menu Item: " + Colors.ENDC)
 
         if choice == "3":
             main_menu(config, path)
@@ -60,14 +51,11 @@ def redis_menu(config, path):
 def rabbit_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(
-            Color.Colors.OKGREEN + "++++++=> " + Color.Colors.OKBLUE + "MMTK v1 RabbitmQ Menu:" + Color.Colors.OKGREEN + " <=++++++" + Color.Colors.ENDC)
-        print(
-            Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 1. " + Color.Colors.OKBLUE + "Configure RabbitMQ" + Color.Colors.ENDC)
-        print(
-            Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 2. " + Color.Colors.OKBLUE + "Back" + Color.Colors.ENDC)
+        print(Colors.OKGREEN + "++++++=> " + Colors.OKBLUE + "MMTK v1 RabbitmQ Menu:" + Colors.OKGREEN + " <=++++++" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 1. " + Colors.OKBLUE + "Configure RabbitMQ" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 2. " + Colors.OKBLUE + "Back" + Colors.ENDC)
 
-        choice = input("Choose Menu Item: ")
+        choice = input(Colors.WARNING + "Choose Menu Item: " + Colors.ENDC)
 
         if choice == "2":
             main_menu(config, path)
@@ -81,16 +69,12 @@ def rabbit_menu(config, path):
 def varnish_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(
-            Color.Colors.OKGREEN + "++++++=> " + Color.Colors.OKBLUE + "MMTK v1 Varnish Menu:" + Color.Colors.OKGREEN + " <=++++++" + Color.Colors.ENDC)
-        print(
-            Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 1. " + Color.Colors.OKBLUE + "Configure Varnish" + Color.Colors.ENDC)
-        print(
-            Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 2. " + Color.Colors.OKBLUE + "Purge Varnish" + Color.Colors.ENDC)
-        print(
-            Color.Colors.OKGREEN + "=>" + Color.Colors.WARNING + " 3. " + Color.Colors.OKBLUE + "Back" + Color.Colors.ENDC)
+        print(Colors.OKGREEN + "++++++=> " + Colors.OKBLUE + "MMTK v1 Varnish Menu:" + Colors.OKGREEN + " <=++++++" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 1. " + Colors.OKBLUE + "Configure Varnish" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 2. " + Colors.OKBLUE + "Purge Varnish" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 3. " + Colors.OKBLUE + "Back" + Colors.ENDC)
 
-        choice = input("Choose Menu Item: ")
+        choice = input(Colors.WARNING + "Choose Menu Item: " + Colors.ENDC)
 
         if choice == "3":
             main_menu(config, path)
@@ -101,3 +85,22 @@ def varnish_menu(config, path):
         else:
             print("I don't understand your choice.")
             varnish_menu(config, path)
+
+def cron_menu(config, path):
+    choice = '0'
+    while choice == '0':
+        print(Colors.OKGREEN + "++++++=> " + Colors.OKBLUE + "MMTK v1 Cron Menu:" + Colors.OKGREEN + " <=++++++" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 1. " + Colors.OKBLUE + "Install MageMojo Cron" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 2. " + Colors.OKBLUE + "Reset Crons" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 3. " + Colors.OKBLUE + "Back" + Colors.ENDC)
+
+        choice = input(Colors.WARNING + "Choose Menu Item: " + Colors.ENDC)
+
+        if choice == "3":
+            main_menu(config, path)
+        elif choice == "2":
+            Cron.reset_crons(config, path)
+        elif choice == "1":
+            Cron.install_mmcron(config, path)
+        else:
+            print("I don't understand your choice.")

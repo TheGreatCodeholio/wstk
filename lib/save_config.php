@@ -12,6 +12,6 @@ function varexport($expression, $return=FALSE) {
     if ((bool)$return) return $export; else echo $export;
 }
 
-$strip_num = preg_replace("/[0-9]+ \=\>/i", '', varexport($config, true));
+$strip_num = preg_replace("/[0-9]{1,2}+ \=\>/i", '', varexport($config, true));
 
 file_put_contents($path . '/app/etc/env.php', "<?php \nreturn " . $strip_num . ";");

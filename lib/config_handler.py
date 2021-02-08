@@ -23,8 +23,6 @@ def load_config(path):
 
 
 def save_config(config, path):
-    if "driver_options" in config["db"]["connection"]["default"]:
-        del config["db"]["connection"]["default"]['driver_options']
     with open('/srv/mmtk/var/config.json', 'w') as outfile:
         json.dump(config, outfile)
     os.popen("php -d display_errors=on ./lib/save_config.php " + path)

@@ -11,10 +11,10 @@ def fix_credentials(config, path):
     db_pass = os.popen("cat /srv/mmtk/var/cred.log | grep Username | awk '{print $14}' | cut -c3- | rev | cut -c4- | rev").read().split('\n')[0]
     db_name = os.popen("cat /srv/mmtk/var/cred.log | grep Username | awk '{print $7}' | cut -c3- | rev | cut -c4- | rev").read().split('\n')[0]
 
-    config["db"]["connnection"]["default"]["host"] = "mysql"
-    config["db"]["connnection"]["default"]["dbname"] = db_name
-    config["db"]["connnection"]["default"]["username"] = db_user
-    config["db"]["connnection"]["default"]["password"] = db_pass
+    config["db"]["connection"]["default"]["host"] = "mysql"
+    config["db"]["connection"]["default"]["dbname"] = db_name
+    config["db"]["connection"]["default"]["username"] = db_user
+    config["db"]["connection"]["default"]["password"] = db_pass
     Conf.save_config(config, path)
     Menu.main_menu(config, path)
 
@@ -22,8 +22,10 @@ def mysql_dump(config, path):
     x = datetime.datetime.now()
     current_date = x.strftime("%d%B%y")
     # Check if backups directory exists locally
-    if not os.path.exists("/srv/backups/" + current_date):
-        os.popen("mkdir /srv/backups" + current_date)
-    os.popen("mysqldump --skip-lock-tables --extended-insert=FALSE --verbose -h mysql --quick -u " + config["db"]["connnection"]["default"]["username"] + " -p" + config["db"]["connnection"]["default"]["dbname"] + " " + config["db"]["connnection"]["default"]["password"] + " > /srv/ " + current_date + "/" + config["db"]["connnection"]["default"]["dbname"] + ".sql").read()
-    print(Colors.OKGREEN + "MySQL backed up to /srv/backups/" + current_date + "/" + config["db"]["connnection"]["default"]["dbname"] + ".sql" + Colors.ENDC)
+    if not os.path.exists("/srv/backups/"):
+        os.popen("mkdir /srv/backups/")
+    if not os.path.exists("/srv/backups/" + current_date + "/"):
+        os.popen("mkdir /srv/backups/" + current_date + "/")
+    os.popen("mysqldump --skip-lock-tables --extended-insert=FALSE --verbose -h mysql --quick -u " + config["db"]["connection"]["default"]["username"] + " -p" + config["db"]["connection"]["default"]["password"] + " " + config["db"]["connection"]["default"]["dbname"] + " > /srv/backups/" + current_date + "/" + config["db"]["connection"]["default"]["dbname"] + ".sql").read()
+    print(Colors.OKGREEN + "MySQL backed up to /srv/backups/" + current_date + "/" + config["db"]["connection"]["default"]["dbname"] + ".sql" + Colors.ENDC)
     Menu.main_menu(config, path)

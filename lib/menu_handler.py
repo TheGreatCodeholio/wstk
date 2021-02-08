@@ -4,6 +4,7 @@ import lib.rabbitmq_handler as Rabbit
 import lib.varnish_handler as Varnish
 import lib.cron_handler as Cron
 import lib.cache_handler as Cache
+import lib.mysql_handler as Mysql
 import sys
 
 
@@ -16,12 +17,15 @@ def main_menu(config, path):
         print(Colors.OKGREEN + "=>" + Colors.WARNING + " 3. " + Colors.OKBLUE + "Varnish" + Colors.ENDC)
         print(Colors.OKGREEN + "=>" + Colors.WARNING + " 4. " + Colors.OKBLUE + "Cron" + Colors.ENDC)
         print(Colors.OKGREEN + "=>" + Colors.WARNING + " 5. " + Colors.OKBLUE + "Caches/Autoscaling" + Colors.ENDC)
-        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 6. " + Colors.OKBLUE + "Exit" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 6. " + Colors.OKBLUE + "MySQL" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 7. " + Colors.OKBLUE + "Exit" + Colors.ENDC)
 
         choice = input(Colors.WARNING + "Choose Menu Item: " + Colors.ENDC)
 
-        if choice == "6":
+        if choice == "7":
             sys.exit()
+        elif choice == "6":
+            mysql_menu(config, path)
         elif choice == "5":
             cache_menu(config, path)
         elif choice == "4":
@@ -148,3 +152,24 @@ def cache_menu(config, path):
         else:
             print("I don't understand your choice.")
             redis_menu(config, path)
+
+
+def mysql_menu(config, path):
+    choice = '0'
+    while choice == '0':
+        print(Colors.OKGREEN + "++++++=> " + Colors.OKBLUE + "MMTK v1 MySQL Menu:" + Colors.OKGREEN + " <=++++++" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 1. " + Colors.OKBLUE + "Fix MySQL Credentials" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 2. " + Colors.OKBLUE + "Dump Database" + Colors.ENDC)
+        print(Colors.OKGREEN + "=>" + Colors.WARNING + " 3. " + Colors.OKBLUE + "Back" + Colors.ENDC)
+
+        choice = input(Colors.WARNING + "Choose Menu Item: " + Colors.ENDC)
+
+        if choice == "3":
+            main_menu(config, path)
+        elif choice == "2":
+            Mysql.mysql_dump(config, path)
+        elif choice == "1":
+            Mysql.fix_credentials(config, path)
+        else:
+            print("I don't understand your choice.")
+            mysql_menu(config, path)

@@ -29,4 +29,4 @@ def save_config(config, path):
         config["db"]["connection"]["default"]["driver_options"] = {'1014': "False"}
     with open('/srv/wstk/var/config.json', 'w+') as outfile:
         json.dump(config, outfile)
-    shell.run_bash_command(config, path, action, "php -d display_errors=on ./lib/save_config.php " + path, "app/etc/env.php Updated Successfully")
+    shell.run_bash_command(config, path, action, "php -d display_errors=on ./lib/save_config.php " + path, "")

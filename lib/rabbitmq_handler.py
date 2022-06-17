@@ -5,6 +5,17 @@ import lib.command_handler as shell
 from subprocess import check_output
 
 
+def check_rabbitmq(config, path):
+    if "queue" not in config:
+        config_rabbitmq(config, path)
+    elif "amqp" in config["queue"]:
+        del config["queue"]
+        conf.save_config(config, path)
+        config_rabbitmq(config, path)
+    else:
+        config_rabbitmq(config, path)
+
+
 def config_rabbitmq(config, path):
     action = "RabbitMQ Credentials"
     rabbit_password = input(Colors.FG.Yellow + "RabbitMQ Password:" + Colors.Reset)

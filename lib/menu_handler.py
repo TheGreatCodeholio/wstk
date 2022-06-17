@@ -76,7 +76,7 @@ def rabbit_menu(config, path):
         if choice == "2":
             main_menu(path)
         elif choice == "1":
-            Rabbit.check_rabbitmq(config, path)
+            Rabbit.config_rabbitmq(config, path)
         else:
             print("I don't understand your choice.")
             rabbit_menu(config, path)

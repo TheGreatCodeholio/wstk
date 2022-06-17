@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 from lib.text_color import Colors
 from subprocess import check_output
-import command_handler as shell
+import lib.command_handler as shell
 import json
-import os
 
 
 def get_path():

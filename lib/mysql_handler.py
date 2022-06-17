@@ -3,7 +3,7 @@ import json
 import lib.menu_handler as menu
 from lib.text_color import Colors
 import os
-import command_handler as shell
+import lib.command_handler as shell
 import datetime
 
 

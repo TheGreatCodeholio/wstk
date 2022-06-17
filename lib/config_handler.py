@@ -26,7 +26,7 @@ def save_config(config, path):
     action = "Save Config"
     if "driver_options" in config["db"]["connection"]["default"]:
         del config["db"]["connection"]["default"]["driver_options"]
-        config["db"]["connection"]["default"]["driver_options"] = {"1014": "False"}
+        config["db"]["connection"]["default"]["driver_options"]["1014"] = "False"
     with open('/srv/wstk/var/config.json', 'w+') as outfile:
         json.dump(config, outfile)
     shell.run_bash_command(config, path, action, "php -d display_errors=on ./lib/save_config.php " + path, "")

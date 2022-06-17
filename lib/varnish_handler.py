@@ -19,7 +19,7 @@ def config_varnish(config, path):
     shell.run_bash_command(config, path, action, "php " + path + "/bin/magento config:set system/full_page_cache/varnish/access_list localhost", "Set access list to localhost")
     shell.run_bash_command(config, path, action, "php " + path + "/bin/magento config:set system/full_page_cache/varnish/backend_host nginx", "Set backend host to NGINX")
     shell.run_bash_command(config, path, action, "php " + path + "/bin/magento config:set system/full_page_cache/varnish/backend_port 8080", "Set backend port to 8080")
-    shell.run_bash_command(config, path, action, "php " + path + "/bin/magento config:set --http-cache-hosts=varnish", success_message)
+    shell.run_bash_command(config, path, action, "php " + path + "/bin/magento setup:config:set --http-cache-hosts=varnish", success_message)
     menu.main_menu(path)
 
 

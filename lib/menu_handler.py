@@ -104,7 +104,7 @@ def varnish_menu(config, path):
         elif choice == "2":
             Varnish.purge_varnish(config, path)
         elif choice == "1":
-            Varnish.config_varnish(config, path)
+            Varnish.check_varnish(config, path)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
             varnish_menu(config, path)

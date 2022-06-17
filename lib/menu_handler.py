@@ -61,9 +61,9 @@ def redis_menu(config, path):
         if choice == "3":
             main_menu(path)
         elif choice == "2":
-            Redis.config_cache(config, path)
+            Redis.check_redis_cache(config, path)
         elif choice == "1":
-            Redis.config_sessions(config, path)
+            Redis.check_redis_sessions(config, path)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
             redis_menu(config, path)

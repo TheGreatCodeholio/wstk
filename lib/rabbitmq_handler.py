@@ -19,7 +19,7 @@ def check_rabbitmq(config, path):
 def config_rabbitmq(config, path):
     action = "RabbitMQ Credentials"
     rabbit_password = input(Colors.FG.Yellow + "RabbitMQ Password:" + Colors.Reset)
-    shell.run_bash_command(config, path, action, "php " + path + "/bin/magento setup:config:set --amqp-host=rabbitmq --amqp-port=5672 --amqp-user=username --amqp-password=" + rabbit_password + " --amqp-virtualhost=/", "Set RabbitMQ Credentials")
+    shell.run_bash_command(config, path, action, "php -ddisplay_errors=on " + path + "/bin/magento setup:config:set --amqp-host=rabbitmq --amqp-port=5672 --amqp-user=username --amqp-password=" + rabbit_password + " --amqp-virtualhost=/", "Set RabbitMQ Credentials")
 
     consumers = check_output(['php', path + '/bin/magento', 'queue:consumers:list'])
 

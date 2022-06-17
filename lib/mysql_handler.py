@@ -12,7 +12,7 @@ def update_mysql_credentials_from_system(config, path):
     db_creds = get_mysql_credentials()
     if db_creds is not False:
         shell.run_bash_command(config, path, action,
-                               "php " + path + "/bin/magento setup:config:set --db-host mysql --db-name " + db_creds[
+                               "php -ddisplay_errors=on " + path + "/bin/magento setup:config:set --db-host mysql --db-name " + db_creds[
                                    "Name"] + " --db-user " + db_creds["Username"] + "--db-password " + db_creds[
                                    "Password"], "Updated Database Credentials")
     else:
@@ -30,7 +30,7 @@ def update_mysql_credentials_manual(config, path):
 
     if db_creds is not False:
         shell.run_bash_command(config, path, action,
-                               "php " + path + "/bin/magento setup:config:set --db-host mysql --db-name " + db_creds[
+                               "php -ddisplay_errors=on " + path + "/bin/magento setup:config:set --db-host mysql --db-name " + db_creds[
                                    "Name"] + " --db-user " + db_creds["Username"] + "--db-password " + db_creds[
                                    "Password"], "Updated Database Credentials")
     else:

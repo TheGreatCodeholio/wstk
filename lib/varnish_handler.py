@@ -14,13 +14,22 @@ def check_varnish(config, path):
     else:
         config_varnish(config, path)
 
+
 def config_varnish(config, path):
     action = "Configure Varnish"
-    shell.run_bash_command(config, path, action, "php " + path + "/bin/magento config:set system/full_page_cache/caching_application 2", ".")
-    shell.run_bash_command(config, path, action, "php " + path + "/bin/magento config:set system/full_page_cache/varnish/access_list localhost", "..")
-    shell.run_bash_command(config, path, action, "php " + path + "/bin/magento config:set system/full_page_cache/varnish/backend_host nginx", "...")
-    shell.run_bash_command(config, path, action, "php " + path + "/bin/magento config:set system/full_page_cache/varnish/backend_port 8080", "....")
-    shell.run_bash_command(config, path, action, "php " + path + "/bin/magento setup:config:set --http-cache-hosts=varnish", ".....")
+    shell.run_bash_command(config, path, action,
+                           "php -ddisplay_errors=on " + path + "/bin/magento config:set system/full_page_cache/caching_application 2", ".")
+    shell.run_bash_command(config, path, action,
+                           "php -ddisplay_errors=on " + path + "/bin/magento config:set system/full_page_cache/varnish/access_list localhost",
+                           "..")
+    shell.run_bash_command(config, path, action,
+                           "php -ddisplay_errors=on " + path + "/bin/magento config:set system/full_page_cache/varnish/backend_host nginx",
+                           "...")
+    shell.run_bash_command(config, path, action,
+                           "php -ddisplay_errors=on " + path + "/bin/magento config:set system/full_page_cache/varnish/backend_port 8080",
+                           "....")
+    shell.run_bash_command(config, path, action,
+                           "php -ddisplay_errors=on " + path + "/bin/magento setup:config:set --http-cache-hosts=varnish", ".....")
     print(Colors.FG.LightGreen + Colors.Bold + action + " Completed!" + Colors.Reset)
     menu.main_menu(path)
 

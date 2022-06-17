@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 from lib.text_color import Colors
 from subprocess import check_output
+import command_handler as shell
 import json
 import os
 
 
 def get_path():
-    path = input(Colors.OKGREEN + "Production public_html path: " + Colors.ENDC)
+    path = input(Colors.FG.LightGreen + Colors.Bold + "Production public_html path: " + Colors.Reset)
     if path.endswith('/'):
-        print(Colors.FAIL + "Path should not end with a /. Example /srv/public_html" + Colors.ENDC)
+        print(Colors.FG.Red + Colors.Bold + "Path should not end with a /. Example /srv/public_html" + Colors.Reset)
         get_path()
         return
     else:
@@ -23,7 +24,9 @@ def load_config(path):
 
 
 def save_config(config, path):
-    with open('/srv/mmtk/var/config.json', 'w') as outfile:
+    action = "Save Config"
+    if "driver_options" in config["db"]["connection"]["default"]:
+        print(config["db"]["connection"]["default"]['driver_options'])
+    with open('/srv/wstk/var/config.json', 'w+') as outfile:
         json.dump(config, outfile)
-    os.popen("php -d display_errors=on ./lib/save_config.php " + path)
-    print("Configuration Updated")
+    shell.run_bash_command(config, path, action, "php -d display_errors=on ./lib/save_config.php " + path, "app/etc/env.php Updated Successfully")

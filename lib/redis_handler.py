@@ -1,4 +1,4 @@
-import lib.menu_handler as Menu
+import lib.menu_handler as menu
 from lib.text_color import Colors
 import lib.config_handler as Conf
 
@@ -28,7 +28,7 @@ def config_sessions(config, path):
     config["session"]["redis"]["min_lifetime"] = "60"
     config["session"]["redis"]["max_lifetime"] = "2592000"
     Conf.save_config(config, path)
-    Menu.main_menu(config, path)
+    menu.main_menu(path)
 
 
 def config_cache(config, path):
@@ -51,4 +51,4 @@ def config_cache(config, path):
     config["cache"]["frontend"]["page_cache"]["backend_options"]["database"] = "1"
     config["cache"]["frontend"]["page_cache"]["backend_options"]["compress_data"] = "1"
     Conf.save_config(config, path)
-    Menu.main_menu(config, path)
+    menu.main_menu(path)

@@ -1,20 +1,37 @@
-import lib.menu_handler as Menu
+import time
+
+import lib.menu_handler as menu
 from lib.text_color import Colors
-import lib.config_handler as Conf
+import command_handler as shell
 import os
 
 
 def install_mmcron(config, path):
-    os.popen("cd " + path + " && composer require magemojo/m2-ce-cron").read()
-    os.popen("php " + path + "/bin/magento module:enable MageMojo_Cron").read()
-    os.popen("php " + path + "/bin/magento setup:upgrade").read()
-    os.popen("php " + path + "/bin/magento setup:di:compile").read()
-    os.popen("php " + path + "/bin/magento setup:static-content:deploy -f").read()
-    print(Colors.OKGREEN + "MageMojo Cron Installed" + Colors.ENDC)
-    Menu.main_menu(config, path)
+    action = "Install MageMojo Cron Module"
+
+    print(Colors.FG.LightGreen + "Adding magemojo/m2-me-cron to Composer")
+    shell.run_bash_command(config, path, action, "cd " + path + " && composer require magemojo/m2-ce-cron", "Installed MageMojo Cron With Composer")
+    print(Colors.FG.LightGreen + "Enabling Module in Magento.")
+    shell.run_bash_command(config, path, action, "php " + path + "/bin/magento module:enable MageMojo_Cron", "Enabled MageMojo_Cron in Magento 2")
+    print(Colors.FG.LightGreen + "Running Magento setup:upgrade")
+    shell.run_bash_command(config, path, action, "php " + path + "/bin/magento setup:upgrade", "Ran Magento 2 setup:upgrade.")
+    print(Colors.FG.LightGreen + "Starting Magento Compile")
+    shell.run_bash_command(config, path, action, "php " + path + "/bin/magento setup:di:compile", "Magento 2 Compile Complete")
+    print(Colors.FG.LightGreen + "Starting Static Content Deploy")
+    shell.run_bash_command(config, path, action, "php " + path + "/bin/magento setup:static-content:deploy -f", "Magento 2 Static Content Deploy Complete")
+    print(Colors.FG.LightGreen + Colors.Bold + action + " Completed." + Colors.Reset)
+    time.sleep(1.5)
+    menu.main_menu(path)
+
 
 def reset_crons(config, path):
-    os.popen("mysql -h mysql -u " + config["db"]["connection"]["default"]["username"] + " -p\"" + config["db"]["connection"]["default"]["password"] + "\" " + config["db"]["connection"]["default"]["dbname"] + " -e 'delete from " + config["db"]["table_prefix"] + "cron_schedule'").read()
-    os.popen("pkill -f cron & pkill -f cron & rm -rf " + path + "/var/cron/* ").read()
-    print(Colors.OKGREEN + "Reset Crons" + Colors.ENDC)
-    Menu.main_menu(config, path)
+    action = "Reset Crons"
+    shell.run_bash_command(config, path, action, "/usr/share/stratus/cli crons.stop", "Stopped Cron Jobs")
+    shell.run_bash_command(config, path, action, "mysql -h mysql -u " + config["db"]["connection"]["default"]["username"] + " -p\"" +
+             config["db"]["connection"]["default"]["password"] + "\" " + config["db"]["connection"]["default"][
+                 "dbname"] + " -e 'delete from " + config["db"]["table_prefix"] + "cron_schedule'", "Cleared Cron Schedule Database")
+    shell.run_bash_command(config, path, action, "rm -rf " + path + "/var/cron/*", "Cleared " + path + "/var/cron/")
+    shell.run_bash_command(config, path, action, "/usr/share/stratus/cli crons.stop", "Started Cron Jobs")
+    print(Colors.FG.LightGreen + Colors.Bold + action + " Completed." + Colors.Reset)
+    time.sleep(1.5)
+    menu.main_menu(path)

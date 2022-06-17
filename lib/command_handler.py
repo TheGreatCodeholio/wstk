@@ -1,6 +1,6 @@
 import subprocess
 import json
-import menu_handler as menu
+import lib.menu_handler as menu
 from lib.text_color import Colors
 
 

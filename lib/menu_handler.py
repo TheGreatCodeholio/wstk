@@ -21,13 +21,16 @@ def main_menu(path):
         print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 4. " + Colors.FG.Blue + "Cron" + Colors.Reset)
         print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 5. " + Colors.FG.Blue + "Caches/Autoscaling" + Colors.Reset)
         print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 6. " + Colors.FG.Blue + "MySQL" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 7. " + Colors.FG.Blue + "Exit" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 7. " + Colors.FG.Blue + "ElasticSearch" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 9. " + Colors.FG.Blue + "Exit" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
 
-        if choice == "7":
+        if choice == "8":
             sys.exit()
+        elif choice == "6":
+            elasticsearch_menu(config, path)
         elif choice == "6":
             mysql_menu(config, path)
         elif choice == "5":

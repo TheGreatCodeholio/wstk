@@ -13,6 +13,7 @@ import os
 
 def static_content_deploy(config, path):
     action = "Deploy Static Content"
+    print(Colors.FG.LightGreen + Colors.Bold + action + " Started." + Colors.Reset)
     shell.run_bash_command(config, path, action,
                            "php -ddisplay_errors=on " + path + "/bin/magento setup:static-content:deploy -f",
                            action + " Completed")
@@ -24,7 +25,8 @@ def static_content_deploy(config, path):
 
 
 def magento_compile(config, path):
-    action = "Deploy Static Content"
+    action = "Magento Compile"
+    print(Colors.FG.LightGreen + Colors.Bold + action + " Started." + Colors.Reset)
     shell.run_bash_command(config, path, action,
                            "php -ddisplay_errors=on " + path + "/bin/magento setup:di:compile",
                            action + " Completed")
@@ -36,6 +38,7 @@ def magento_compile(config, path):
 
 def magento_setup_upgrade(config, path):
     action = "Magento Setup Upgrade Database"
+    print(Colors.FG.LightGreen + Colors.Bold + action + " Started." + Colors.Reset)
     shell.run_bash_command(config, path, action,
                            "php -ddisplay_errors=on " + path + "/bin/magento setup:upgrade",
                            action + " Completed")

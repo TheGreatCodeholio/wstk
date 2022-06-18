@@ -21,12 +21,12 @@ def main():
     if os.path.exists(path + "/app/etc/env.php"):
         source = path + "/app/etc/env.php"
         dest = "/srv/wstk/var/"
-        shutil.copytree(source, dest)
+        shutil.copy2(source, dest)
 
     if os.path.exists(path + "/composer.json"):
-        source = path + "/app/etc/composer.json"
+        source = path + "/composer.json"
         dest = "/srv/wstk/var/"
-        shutil.copytree(source, dest)
+        shutil.copy2(source, dest)
 
     menu.main_menu(path)
 

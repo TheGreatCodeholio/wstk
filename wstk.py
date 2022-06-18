@@ -1,3 +1,5 @@
+import shutil
+
 import lib.menu_handler as menu
 import lib.config_handler as conf
 import os
@@ -15,6 +17,16 @@ def main():
     elif int(minor) < 3 or int(minor) > 4:
         print("Script Requires Magento 2.3 or 2.4. Your version: " + version)
         exit()
+
+    if os.path.exists(path + "/app/etc/env.php"):
+        source = path + "/app/etc/env.php"
+        dest = "/srv/wstk/var/"
+        shutil.copytree(source, dest)
+
+    if os.path.exists(path + "/composer.json"):
+        source = path + "/app/etc/composer.json"
+        dest = "/srv/wstk/var/"
+        shutil.copytree(source, dest)
 
     menu.main_menu(path)
 

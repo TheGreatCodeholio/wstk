@@ -16,16 +16,16 @@ def main_menu(path):
     config = conf.load_config(path)
     choice = '0'
     while choice == '0':
-        print(Colors.FG.Green + "+-----=> " + Colors.FG.Blue + "Stratus Toolkit Main Menu:" + Colors.FG.Green + " <=-----+" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.Blue + "Magento" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.Blue + "Redis" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.Blue + "RabbitMQ" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 4. " + Colors.FG.Blue + "Varnish" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 5. " + Colors.FG.Blue + "Cron" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 6. " + Colors.FG.Blue + "Caches/Autoscaling" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 7. " + Colors.FG.Blue + "MySQL" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 8. " + Colors.FG.Blue + "ElasticSearch" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 9. " + Colors.FG.Blue + "Exit" + Colors.Reset)
+        print(Colors.FG.Green + "+-----=> " + Colors.FG.LightBlue + "Stratus Toolkit Main Menu:" + Colors.FG.Green + " <=-----+" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Magento" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Redis" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.LightBlue + "RabbitMQ" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 4. " + Colors.FG.LightBlue + "Varnish" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 5. " + Colors.FG.LightBlue + "Cron" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 6. " + Colors.FG.LightBlue + "Caches/Autoscaling" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 7. " + Colors.FG.LightBlue + "MySQL" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 8. " + Colors.FG.LightBlue + "ElasticSearch" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 9. " + Colors.FG.LightBlue + "Exit" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
@@ -55,10 +55,10 @@ def main_menu(path):
 def redis_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(Colors.FG.Green + "++++++=> " + Colors.FG.Blue + "Redis Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.Blue + "Configure Redis Sessions" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.Blue + "Configure Redis Cache" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.Blue + "Back" + Colors.Reset)
+        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Redis Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Configure Redis Sessions" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Configure Redis Cache" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
@@ -77,9 +77,9 @@ def redis_menu(config, path):
 def rabbit_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(Colors.FG.Green + "++++++=> " + Colors.FG.Blue + "RabbitmQ Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.Blue + "Configure RabbitMQ" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.Blue + "Back" + Colors.Reset)
+        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "RabbitmQ Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Configure RabbitMQ" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
@@ -95,16 +95,16 @@ def rabbit_menu(config, path):
 def magento_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(Colors.FG.Green + "++++++=> " + Colors.FG.Blue + "Magento Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.Blue + "Reindex All" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.Blue + "Reset Indexes" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.Blue + "Set Indexes to Schedule" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 4. " + Colors.FG.Blue + "Magento Database Upgrade" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 5. " + Colors.FG.Blue + "Magento Compile" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 6. " + Colors.FG.Blue + "Deploy Static Content" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 7. " + Colors.FG.Blue + "Patch Magento" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 8. " + Colors.FG.Blue + "Magento Backup" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 9. " + Colors.FG.Blue + "Back" + Colors.Reset)
+        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Magento Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Reindex All" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Reset Indexes" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.LightBlue + "Set Indexes to Schedule" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 4. " + Colors.FG.LightBlue + "Magento Database Upgrade" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 5. " + Colors.FG.LightBlue + "Magento Compile" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 6. " + Colors.FG.LightBlue + "Deploy Static Content" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 7. " + Colors.FG.LightBlue + "Patch Magento" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 8. " + Colors.FG.LightBlue + "Magento Backup" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 9. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
@@ -141,9 +141,9 @@ def magento_menu(config, path):
 def magento_patch_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(Colors.FG.Green + "++++++=> " + Colors.FG.Blue + "Patch Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.Blue + "Magento Catalog RabbitMQ Patch" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.Blue + "Back" + Colors.Reset)
+        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Patch Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Magento Catalog RabbitMQ Patch" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
@@ -159,9 +159,9 @@ def magento_patch_menu(config, path):
 def magento_backup_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(Colors.FG.Green + "++++++=> " + Colors.FG.Blue + "Patch Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.Blue + "Magento Catalog RabbitMQ Patch" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.Blue + "Back" + Colors.Reset)
+        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Patch Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Magento Catalog RabbitMQ Patch" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
@@ -177,10 +177,10 @@ def magento_backup_menu(config, path):
 def varnish_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(Colors.FG.Green + "++++++=> " + Colors.FG.Blue + "Varnish Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.Blue + "Configure Varnish" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.Blue + "Purge Varnish" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.Blue + "Back" + Colors.Reset)
+        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Varnish Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Configure Varnish" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Purge Varnish" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
@@ -199,10 +199,10 @@ def varnish_menu(config, path):
 def cron_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(Colors.FG.Green + "++++++=> " + Colors.FG.Blue + "Cron Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.Blue + "Install MageMojo Cron" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.Blue + "Reset Crons" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.Blue + "Back" + Colors.Reset)
+        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Cron Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Install MageMojo Cron" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Reset Crons" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
@@ -221,13 +221,13 @@ def cron_menu(config, path):
 def cache_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(Colors.FG.Green + "++++++=> " + Colors.FG.Blue + "Cache Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.Blue + "Clear All Cache" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.Blue + "Clear Magento Cache" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.Blue + "Clear Redis Cache" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 4. " + Colors.FG.Blue + "Clear Cloudfront Cache" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 5. " + Colors.FG.Blue + "Autoscaling Reinit" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 6. " + Colors.FG.Blue + "Back" + Colors.Reset)
+        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Cache Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Clear All Cache" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Clear Magento Cache" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.LightBlue + "Clear Redis Cache" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 4. " + Colors.FG.LightBlue + "Clear Cloudfront Cache" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 5. " + Colors.FG.LightBlue + "Autoscaling Reinit" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 6. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
@@ -253,12 +253,12 @@ def cache_menu(config, path):
 def mysql_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(Colors.FG.Green + "++++++=> " + Colors.FG.Blue + "MySQL Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.Blue + "Update MySQL Credentials Auto" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.Blue + "Update MySQL Credentials Manual" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.Blue + "Backup Database Auto" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 4. " + Colors.FG.Blue + "Backup Database Manual" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 5. " + Colors.FG.Blue + "Back" + Colors.Reset)
+        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "MySQL Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Update MySQL Credentials Auto" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Update MySQL Credentials Manual" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.LightBlue + "Backup Database Auto" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 4. " + Colors.FG.LightBlue + "Backup Database Manual" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 5. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
@@ -280,10 +280,10 @@ def mysql_menu(config, path):
 def elasticsearch_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(Colors.FG.Green + "++++++=> " + Colors.FG.Blue + "Elasticsearch Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.Blue + "Configure Elasticsearch" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.Blue + "Reindex Search Catalog" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.Blue + "Back" + Colors.Reset)
+        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Elasticsearch Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Configure Elasticsearch" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Reindex Search Catalog" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)

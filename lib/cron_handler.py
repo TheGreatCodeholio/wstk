@@ -25,12 +25,12 @@ def install_mmcron(config, path):
 
 def reset_crons(config, path):
     action = "Reset Crons"
-    shell.run_bash_command(config, path, action, "/usr/share/stratus/cli crons.stop", "Stopped Cron Jobs")
-    shell.run_bash_command(config, path, action, "mysql -h mysql -u " + config["db"]["connection"]["default"]["username"] + " -p\"" +
+    shell.run_bash_command(config, path, "Stop Crons", "/usr/share/stratus/cli crons.stop", "Stopped Cron Jobs")
+    shell.run_bash_command_popen(config, path, "Delete Cron Schedule from Database", "mysql -h mysql -u " + config["db"]["connection"]["default"]["username"] + " -p\"" +
              config["db"]["connection"]["default"]["password"] + "\" " + config["db"]["connection"]["default"][
-                 "dbname"] + " -e 'delete from " + config["db"]["table_prefix"] + "cron_schedule'", "Cleared Cron Schedule Database")
+                 "dbname"] + " -e 'delete from " + config["db"]["table_prefix"] + "cron_schedule'")
     shell.run_bash_command(config, path, action, "rm -rf " + path + "/var/cron/*", "Cleared " + path + "/var/cron/")
-    shell.run_bash_command(config, path, action, "/usr/share/stratus/cli crons.stop", "Started Cron Jobs")
+    shell.run_bash_command(config, path, action, "/usr/share/stratus/cli crons.start", "Started Cron Jobs")
     print(Colors.FG.LightGreen + Colors.Bold + action + " Completed." + Colors.Reset)
     time.sleep(1.5)
     menu.main_menu(path)

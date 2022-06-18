@@ -22,7 +22,7 @@ def run_bash_command(config, path, action, command, success_message):
     if output.returncode == 0:
         print(Colors.FG.Green + Colors.Bold + success_message + Colors.Reset)
     else:
-        print(Colors.FG.Red + Colors.Bold + "Error executing command. " + output.stdout.decode("utf-8") + Colors.Reset)
+        print(Colors.FG.Red + Colors.Bold + "Error executing command. " + command + "\nError Output:\n" + output.stdout.decode("utf-8") + Colors.Reset)
         print(Colors.FG.Red + Colors.Bold + action + " not completed. Returning to Menu." + Colors.Reset)
         menu.main_menu(path)
 

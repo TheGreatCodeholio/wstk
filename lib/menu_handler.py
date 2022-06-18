@@ -143,13 +143,16 @@ def magento_patch_menu(config, path):
     while choice == '0':
         print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Patch Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
         print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Magento Catalog RabbitMQ Patch" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Magento Framework PDO Adapter MySQL 8.0" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
 
-        if choice == "2":
+        if choice == "3":
             main_menu(path)
+        elif choice == "2":
+            Patches.install_pdo_adapter_mysql8(config, path)
         elif choice == "1":
             Patches.install_catalog_rabbitmq(config, path)
         else:

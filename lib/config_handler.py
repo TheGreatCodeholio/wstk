@@ -16,7 +16,6 @@ def get_path():
 
 
 def load_config(path):
-    print(path)
     config = check_output(["php", "-r", "echo json_encode(include '" + path + "/app/etc/env.php');"])
     config = json.loads(config)
     return config

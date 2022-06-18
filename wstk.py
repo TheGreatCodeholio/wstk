@@ -4,7 +4,8 @@ import os
 
 
 def main():
-    version = str(os.popen("n98-magerun2 sys:info | awk 'NR==10 { print $4;exit }'").readlines()[0]).replace("\n", "")
+    path = conf.get_path()
+    version = str(os.popen("cd " + path + " && n98-magerun2 sys:info | awk 'NR==10 { print $4;exit }'").readlines()[0]).replace("\n", "")
     major = version.split("-")[0].split(".")[0]
     minor = version.split("-")[0].split(".")[1]
 
@@ -15,7 +16,6 @@ def main():
         print("Script Requires Magento 2.3 or 2.4. Your version: " + version)
         exit()
 
-    path = str(os.popen("n98-magerun2 sys:info | awk 'NR==12 { print $4;exit }'").readlines()[0]).replace("\n", "")
     menu.main_menu(path)
 
 

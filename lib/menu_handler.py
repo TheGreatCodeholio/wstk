@@ -117,17 +117,23 @@ def magento_menu(config, path):
             magento_patch_menu(config, path)
         elif choice == "6":
             Magento.static_content_deploy(config, path)
+            magento_menu(config, path)
         elif choice == "5":
             Magento.magento_compile(config, path)
+            magento_menu(config, path)
         elif choice == "4":
             Magento.magento_setup_upgrade(config, path)
+            magento_menu(config, path)
         elif choice == "3":
             Magento.set_index_to_schedule(config, path)
+            magento_menu(config, path)
         elif choice == "2":
             Magento.reset_all_index(config, path)
+            magento_menu(config, path)
         elif choice == "1":
             Magento.reset_all_index(config, path)
-            Magento.reset_all_index(config, path)
+            Magento.reindex_all_index(config, path)
+            magento_menu(config, path)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
             magento_menu(config, path)

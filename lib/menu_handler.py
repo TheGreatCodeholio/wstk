@@ -26,13 +26,16 @@ def main_menu(path):
         print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 6. " + Colors.FG.LightBlue + "Caches/Autoscaling" + Colors.Reset)
         print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 7. " + Colors.FG.LightBlue + "MySQL" + Colors.Reset)
         print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 8. " + Colors.FG.LightBlue + "ElasticSearch" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 9. " + Colors.FG.LightBlue + "Exit" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 9. " + Colors.FG.LightBlue + "Development Copy" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 10. " + Colors.FG.LightBlue + "Exit" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
 
-        if choice == "9":
+        if choice == "10":
             sys.exit()
+        elif choice == "9":
+            elasticsearch_menu(config, path)
         elif choice == "8":
             elasticsearch_menu(config, path)
         elif choice == "7":
@@ -312,4 +315,25 @@ def elasticsearch_menu(config, path):
             ElasticSearch.configure_elasticsearch(config, path)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
-            cron_menu(config, path)
+            elasticsearch_menu(config, path)
+
+def dev_copy_menu(config, path):
+    choice = '0'
+    while choice == '0':
+        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Dev Copy Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Dev Copy Default" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Dev Copy No Media" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
+        print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
+
+        choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
+
+        if choice == "3":
+            main_menu(path)
+        elif choice == "2":
+            Patches.install_pdo_adapter_mysql8(config, path)
+        elif choice == "1":
+            Patches.install_catalog_rabbitmq(config, path)
+        else:
+            print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
+            magento_patch_menu(config, path)

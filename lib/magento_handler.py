@@ -18,7 +18,7 @@ def backup_magento_basic(config, magento_root_path, backup_path, menu_return):
     if not os.path.exists(backup_path):
         action = "Create Backup Folder"
         shell.run_bash_command(config, magento_root_path, action, "mkdir -p " + backup_path, "Backup Directory Created")
-    shell.run_bash_command_popen(config, magento_root_path, action, "tar --exclude=" + magento_root_path + "/var/* -zcf " + backup_path + "/backup_" + current_date + ".tar.gz " + backup_path)
+    shell.run_bash_command_popen(config, magento_root_path, action, "tar --exclude=" + magento_root_path + "/var/* -zcf " + backup_path + "/backup_" + current_date + ".tar.gz " + magento_root_path)
     if menu_return == 1:
         menu.magento_menu(config, magento_root_path)
 
@@ -34,7 +34,7 @@ def backup_magento_no_media(config, magento_root_path, backup_path, menu_return)
     if not os.path.exists(backup_path):
         action = "Create Backup Folder"
         shell.run_bash_command(config, magento_root_path, action, "mkdir -p " + backup_path, "Backup Directory Created")
-    shell.run_bash_command_popen(config, magento_root_path, action, "tar --exclude=" + magento_root_path + "/var/* --exclude=" + magento_root_path + "/pub/media/* -zcf " + backup_path + "/backup_" + current_date + ".tar.gz " + backup_path)
+    shell.run_bash_command_popen(config, magento_root_path, action, "tar --exclude=" + magento_root_path + "/var/* --exclude=" + magento_root_path + "/pub/media/* -zcf " + backup_path + "/backup_" + current_date + ".tar.gz " + magento_root_path)
     if menu_return == 1:
         menu.magento_menu(config, magento_root_path)
 

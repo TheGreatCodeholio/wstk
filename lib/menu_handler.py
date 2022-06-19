@@ -10,6 +10,7 @@ import lib.magento_handler as Magento
 import lib.elasticsearch_handler as ElasticSearch
 import lib.patch_handler as Patches
 import lib.backup_handler as Backup
+import lib.dev_copy_handler as Dev
 import sys
 version = "1.0"
 
@@ -35,7 +36,7 @@ def main_menu(path):
         if choice == "10":
             sys.exit()
         elif choice == "9":
-            elasticsearch_menu(config, path)
+            dev_copy_menu(config, path)
         elif choice == "8":
             elasticsearch_menu(config, path)
         elif choice == "7":
@@ -116,7 +117,7 @@ def magento_menu(config, path):
         if choice == "9":
             main_menu(path)
         elif choice == "8":
-            magento_menu(config, path)
+            magento_backup_menu(config, path)
         elif choice == "7":
             magento_patch_menu(config, path)
         elif choice == "6":
@@ -331,9 +332,9 @@ def dev_copy_menu(config, path):
         if choice == "3":
             main_menu(path)
         elif choice == "2":
-            Patches.install_pdo_adapter_mysql8(config, path)
+            dev_copy_menu(config, path)
         elif choice == "1":
-            Patches.install_catalog_rabbitmq(config, path)
+            Dev.dev_copy_default(config, path, 1)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
             magento_patch_menu(config, path)

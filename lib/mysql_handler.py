@@ -4,22 +4,25 @@ import lib.menu_handler as menu
 from lib.text_color import Colors
 import os
 import lib.command_handler as shell
+import lib.config_handler as conf
 import datetime
 
 
-def update_mysql_credentials_from_system(config, path):
+def update_mysql_credentials_from_system(config, path, menu_return):
     action = "Update MySQL Credentials"
     db_creds = get_mysql_credentials()
     if db_creds is not False:
-        shell.run_bash_command_popen(config, path, action,
-                               "php -ddisplay_errors=on " + path + "/bin/magento setup:config:set --db-host mysql --db-name " + db_creds[
-                                   "Name"] + " --db-user " + db_creds["Username"] + " --db-password " + db_creds[
-                                   "Password"])
+        config["db"]["connection"]["default"]["host"] = "mysql"
+        config["db"]["connection"]["default"]["dbname"] = db_creds["Name"]
+        config["db"]["connection"]["default"]["username"] = db_creds["Username"]
+        config["db"]["connection"]["default"]["password"] = db_creds["Password"]
+        conf.save_config(config, path)
         print(Colors.FG.LightGreen + Colors.Bold + action + " Completed!" + Colors.Reset)
     else:
         print(Colors.FG.Red + Colors.Bold + "Error getting database credentials from Stratus CLI" + Colors.Reset)
         print(Colors.FG.Red + Colors.Bold + action + " not completed. Returning to Menu." + Colors.Reset)
-    menu.main_menu(path)
+    if menu_return == 1:
+        menu.main_menu(path)
 
 
 def update_mysql_credentials_manual(config, path):

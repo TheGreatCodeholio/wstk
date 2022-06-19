@@ -11,6 +11,7 @@ import lib.cache_handler as cache
 from lib.text_color import Colors
 import lib.command_handler as shell
 import lib.magento_handler as mage
+import lib.config_handler as conf
 import os
 
 
@@ -43,6 +44,7 @@ def dev_copy_default(config, path, media):
     print(Colors.FG.LightGreen + Colors.Bold + "Doing Dev Copy Configuration for Magento 2" + Colors.Reset)
     time.sleep(1.5)
     dev_config(settings_dict, config).init_config()
+    config = conf.load_config(path)
     Mage.reindex_all_index(config, settings_dict["prod_public_html"])
     Mage.magento_compile(config, settings_dict["prod_public_html"])
     Mage.static_content_deploy(config, settings_dict["prod_public_html"])
@@ -94,7 +96,7 @@ def backup_source_database(settings_dict):
             "prod_ssh_host"] + " -p" + settings_dict[
             "prod_ssh_port"] + " 'mysqldump --skip-lock-tables --extended-insert=FALSE --verbose -h mysql --quick -u " +
         settings_dict["prod_mysql_user"] + " -p" + settings_dict["prod_mysql_password"] + " " + settings_dict[
-            "prod_mysql_database"] + " > /srv/db_" + settings_dict["date"] + ".sql'").read()
+            "prod_mysql_database"] + " > /srv/db_" + settings_dict["current_date"] + ".sql'").read()
     # Check if backups directory exists locally
     if not os.path.exists("/srv/backups"):
         os.popen("mkdir /srv/backups")
@@ -102,7 +104,7 @@ def backup_source_database(settings_dict):
     print(Colors.FG.LightGreen + Colors.Bold + "RSYNC Production Database to Dev." + Colors.Reset)
     os.popen("rsync -Pav -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
         "prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" + settings_dict[
-                 "prod_ssh_host"] + ":/srv/db_" + settings_dict["date"] + ".sql /srv/backups/").read()
+                 "prod_ssh_host"] + ":/srv/db_" + settings_dict["current_date"] + ".sql /srv/backups/").read()
     # Finished with database backup.
 
 
@@ -113,7 +115,7 @@ def import_source_database(settings_dict):
     # Fix SUPER Privs
     print(Colors.FG.LightGreen + Colors.Bold + "Fixing Super Privileges." + Colors.Reset)
     os.popen("sed -E 's/DEFINER=`[^`]+`@`[^`]+`/DEFINER=CURRENT_USER/g' /srv/backups/db_" + settings_dict[
-        "date"] + ".sql > /srv/backups/fixed_dump.sql")
+        "current_date"] + ".sql > /srv/backups/fixed_dump.sql")
     # Drop Old Database
     os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict[
         "dev_mysql_password"] + "' -e 'drop database " + settings_dict["dev_mysql_database"] + "'").read()
@@ -277,7 +279,7 @@ class dev_config:
 
     def config_database(self):
         print(Colors.FG.LightGreen + Colors.Bold + "Configuring Database." + Colors.Reset)
-        Mysql.update_mysql_credentials_from_system(self.config, self.settings_dict["prod_public_html"])
+        Mysql.update_mysql_credentials_from_system(self.config, self.settings_dict["prod_public_html"], 0)
         self.config_downloadable_domains()
 
     def config_downloadable_domains(self):

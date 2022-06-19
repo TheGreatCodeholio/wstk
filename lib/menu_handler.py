@@ -9,6 +9,7 @@ import lib.mysql_handler as Mysql
 import lib.magento_handler as Magento
 import lib.elasticsearch_handler as ElasticSearch
 import lib.patch_handler as Patches
+import lib.backup_handler as Backup
 import sys
 version = "1.0"
 
@@ -162,17 +163,29 @@ def magento_patch_menu(config, path):
 def magento_backup_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Patch Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Magento Catalog RabbitMQ Patch" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
+        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Backup Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Backup Magento S3 Bucket" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Backup Magento /srv/backups" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.LightBlue + "Backup Magento /srv/backups (No Media)" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 4. " + Colors.FG.LightBlue + "Backup Magento Custom" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 5. " + Colors.FG.LightBlue + "Backup Magento Custom (No Media)" + Colors.Reset)
+        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 6. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
         print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
         choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
 
-        if choice == "2":
+        if choice == "6":
             main_menu(path)
+        elif choice == "5":
+            Backup.backup_local_custom(config, path, 0)
+        elif choice == "4":
+            Backup.backup_local_custom(config, path, 1)
+        elif choice == "3":
+            Backup.backup_local_auto(config, path, 0)
+        elif choice == "2":
+            Backup.backup_local_auto(config, path, 1)
         elif choice == "1":
-            Patches.install_catalog_rabbitmq(config, path)
+            Backup.backup_to_s3_bucket(config, path)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
             magento_patch_menu(config, path)
@@ -271,7 +284,7 @@ def mysql_menu(config, path):
         elif choice == "4":
             Mysql.mysql_dump_manual(config, path)
         elif choice == "3":
-            Mysql.mysql_dump_auto(config, path, "/srv/backups")
+            Mysql.mysql_dump_auto(config, path, "/srv/backups", 1)
         elif choice == "2":
             Mysql.update_mysql_credentials_manual(config, path)
         elif choice == "1":

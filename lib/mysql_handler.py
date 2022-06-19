@@ -51,7 +51,7 @@ def get_mysql_credentials():
         return False
 
 
-def mysql_dump_auto(config, magento_root_path, backup_path):
+def mysql_dump_auto(config, magento_root_path, backup_path, menu_return):
     x = datetime.datetime.now()
     current_date = x.strftime("%d%B%y")
     # Check if backups directory exists locally
@@ -64,11 +64,11 @@ def mysql_dump_auto(config, magento_root_path, backup_path):
 
     action = "Database Backup"
     shell.run_bash_command_popen(config, magento_root_path, action, "mysqldump --no-tablespaces --skip-lock-tables --opt --single-transaction --max_allowed_packet=512M -h mysql -u " + config["db"]["connection"]["default"]["username"] + " -p" + config["db"]["connection"]["default"]["password"] + " " + config["db"]["connection"]["default"]["dbname"] + " > " + backup_path + "/" + current_date + "_" + config["db"]["connection"]["default"]["dbname"] + ".sql")
-    print(Colors.FG.LightGreen + Colors.Bold + "MySQL Database Backedup to: " + backup_path + "/" + current_date + "_" + config["db"]["connection"]["default"][
+    print(Colors.FG.LightGreen + Colors.Bold + "MySQL Database Backed up to: " + backup_path + "/" + current_date + "_" + config["db"]["connection"]["default"][
         "dbname"] + ".sql" + Colors.Reset)
 
-    menu.main_menu(magento_root_path)
-
+    if menu_return == 1:
+        menu.mysql_menu(config, magento_root_path)
 
 def mysql_dump_manual(config, magento_root_path):
     x = datetime.datetime.now()

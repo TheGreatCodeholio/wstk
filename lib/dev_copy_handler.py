@@ -28,7 +28,7 @@ def dev_copy_default(config, path, media):
     print(Colors.FG.LightBlue + pub_key + Colors.Reset)
     dev_ip = os.popen("curl http://ipcheck.com/").read()
     print(Colors.FG.Yellow + "Add SSH User " + Colors.Reset + Colors.FG.LightGreen + settings_dict[
-        "sou_ssh_user"] + Colors.Reset + Colors.FG.Yellow + " to Production whitelist and add IP address: " + Colors.Reset + Colors.FG.LightGreen + dev_ip + Colors.Reset)
+        "prod_ssh_user"] + Colors.Reset + Colors.FG.Yellow + " to Production whitelist and add IP address: " + Colors.Reset + Colors.FG.LightGreen + dev_ip + Colors.Reset)
     input(Colors.FG.Yellow + "Press Any Key to continue..." + Colors.Reset)
     # Backup Source Database
     print(Colors.FG.LightGreen + Colors.Bold + "Starting Production Database Backup" + Colors.Reset)

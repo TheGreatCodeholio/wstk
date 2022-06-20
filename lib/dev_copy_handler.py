@@ -62,26 +62,47 @@ def check_for_ssh_key(ssh_user):
 
 def rsync_production_files(settings_dict):
     action = "RSYNC Prod Files to Dev."
-    if os.path.exists(settings_dict["prod_public_html"]):
-        child = subprocess.Popen("rm -rf " + settings_dict["prod_public_html"], shell=True, stdout=subprocess.PIPE)
+    new = settings_dict["prod_public_html"].split("/")
+    for l in new:
+        if l == "":
+            new.remove(l)
+    new_path = "/"
+    list_length = len(new) - 1
+    for l in range(list_length):
+        new_path += new[l] + "/"
+    if os.path.exists(new_path):
+        child = subprocess.Popen("rm -rf " + new_path, shell=True, stdout=subprocess.PIPE)
         streamdata = child.communicate()[0]
         rc = child.returncode
     print(Colors.FG.LightGreen + Colors.Bold + "Starting " + action + Colors.Reset)
     shell.run_bash_command_popen(False, False, action, "rsync -Pavl -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
         "prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + ":" +
-             settings_dict["prod_public_html"] + " " + settings_dict["prod_public_html"], ".")
+             settings_dict["prod_public_html"] + " " + new_path, ".")
     if settings_dict["symlink_folders"] is not False:
         count = 2
         folder_list = list(settings_dict["symlink_folders"])
         for f in folder_list:
+            new = f.split("/")
+            for l in new:
+                if l == "":
+                    new.remove(l)
+            new_path = "/"
+            list_length = len(new) - 1
+            for p in range(list_length):
+                new_path += new[p] + "/"
+
+            success_message = "." * count
+            shell.run_bash_command_popen(False, False, action, "mkdir -p " + new_path, success_message)
+            count += 1
             success_message = "." * count
             shell.run_bash_command_popen(False, False, action,
                                          "rsync -Pavl -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " +
                                          settings_dict[
                                              "prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" +
                                          settings_dict["prod_ssh_host"] + ":" +
-                                         f + " " + f,
+                                         f + " " + new_path,
                                          success_message)
+            count += 1
     print(Colors.FG.LightGreen + Colors.Bold + action + " Complete!" + Colors.Reset)
 
 

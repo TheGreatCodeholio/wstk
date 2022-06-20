@@ -35,7 +35,6 @@ def dev_copy_default(config, path, media):
     print(Colors.FG.LightGreen + Colors.Bold + "Starting Database Import From Production" + Colors.Reset)
     time.sleep(1.5)
     Mysql.import_remote_database(settings_dict)
-    print(Colors.FG.LightGreen + Colors.Bold + "Starting RSYNC Files From Production" + Colors.Reset)
     time.sleep(1.5)
     rsync_production_files(settings_dict)
     print(Colors.FG.LightGreen + Colors.Bold + "Doing Dev Copy Configuration for Magento 2" + Colors.Reset)
@@ -61,14 +60,15 @@ def check_for_ssh_key(ssh_user):
 
 
 def rsync_production_files(settings_dict):
+    action = "RSYNC Prod Files to Dev."
     if os.path.exists(settings_dict["prod_public_html"]):
         child = subprocess.Popen("rm -rf " + settings_dict["prod_public_html"], shell=True, stdout=subprocess.PIPE)
         streamdata = child.communicate()[0]
         rc = child.returncode
-    print(Colors.FG.LightGreen + Colors.Bold + "RSYNC Prod Files to Dev." + Colors.Reset)
-    shell.run_bash_command_popen(False, False, "RSYNC Prod Files to Dev.", "rsync -Pav -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
+    print(Colors.FG.LightGreen + Colors.Bold + "Starting " + action + Colors.Reset)
+    shell.run_bash_command_popen(False, False, action, "rsync -Pav -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
         "prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + ":" +
-             settings_dict["prod_public_html"] + " /srv/", "...")
+             settings_dict["prod_public_html"] + " /srv/", 1)
 
 
 class UserInput:

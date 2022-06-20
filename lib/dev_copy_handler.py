@@ -36,7 +36,9 @@ def dev_copy_default(config, path, media):
     config = conf.load_config(settings_dict["prod_public_html"])
     dev_config(settings_dict, config).init_config()
     config = conf.load_config(settings_dict["prod_public_html"])
-    Rabbit.check_rabbitmq(config, settings_dict["prod_public_html"], 0)
+    if "queue" in config:
+        if "amqp" in config["queue"]:
+            Rabbit.check_rabbitmq(config, settings_dict["prod_public_html"], 0)
     Mage.reindex_all_index(config, settings_dict["prod_public_html"])
     Mage.magento_compile(config, settings_dict["prod_public_html"])
     Mage.static_content_deploy(config, settings_dict["prod_public_html"])
@@ -227,8 +229,7 @@ class UserInput:
 
 
     def get_prod_symlinks(self):
-        symlink_result = input(Colors.FG.Yellow + "Are there symlinks? (y/N): " + Colors.Reset)
-        if symlink_result.lower() == "y" or symlink_result.lower() == "yes":
+
             print("ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict["prod_ssh_user"] + "@" +
                 self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
                     "prod_ssh_port"] + " 'find " + self.settings_dict["prod_public_html"] + " -type l -ls | awk \"{print $13}\" > link.txt 2>&1; cat link.txt'")
@@ -241,9 +242,6 @@ class UserInput:
             cred_file.close()
             symlinks = os.popen("cat remote_links.log | awk '{print $13}'").read()
             folders = symlinks.split("\n")
-            if folders == "":
-                print(Colors.BG.Red + "Doesn't seem to be any symlinks answer N not Y." + Colors.Reset)
-                self.get_prod_symlinks()
             folder_list = []
             for f in folders:
                 if f.startswith("/"):
@@ -251,15 +249,11 @@ class UserInput:
                         folder_list.append(f[:-1].replace(" ", ""))
                     else:
                         folder_list.append(f.replace(" ", ""))
-            self.settings_dict["symlink_folders"] = folder_list
+            if len(folder_list) < 1:
+                self.settings_dict["symlink_folders"] = False
+            else:
+                self.settings_dict["symlink_folders"] = folder_list
             self.save_instance_config()
-        elif symlink_result == "" or symlink_result.lower() == "n" or symlink_result.lower() == "no":
-            self.settings_dict["symlink_folders"] = False
-            self.save_instance_config()
-        else:
-            print(Colors.BG.Red + "Must answer y or n." + Colors.Reset)
-            self.get_prod_symlinks()
-
 
     def save_instance_config(self):
         print(Colors.FG.LightGreen + Colors.Bold + "Saving Config....." + Colors.Reset)

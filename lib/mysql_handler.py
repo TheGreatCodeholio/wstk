@@ -122,7 +122,7 @@ def backup_remote_database(settings_dict):
     os.popen("rm remote_creds.log")
     # MySQL Dump Database
     print(Colors.FG.LightGreen + Colors.Bold + "Dumping Production Database." + Colors.Reset)
-    os.popen("ssh -i " + settings_dict["prod_ssh_privkey_path"] + " " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + " -p" + settings_dict["prod_ssh_port"] + " 'mysqldump --skip-lock-tables --extended-insert=FALSE --verbose -h mysql --quick -u " + settings_dict["prod_mysql_user"] + " -p" + settings_dict["prod_mysql_password"] + " " + settings_dict["prod_mysql_database"] + " > /srv/db_" + settings_dict["current_date"] + ".sql'").read()
+    os.popen("ssh -i " + settings_dict["prod_ssh_privkey_path"] + " " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + " -p" + settings_dict["prod_ssh_port"] + " 'mysqldump --no-tablespaces --skip-lock-tables --opt --single-transaction --max_allowed_packet=512M -h mysql --quick -u " + settings_dict["prod_mysql_user"] + " -p" + settings_dict["prod_mysql_password"] + " " + settings_dict["prod_mysql_database"] + " > /srv/db_" + settings_dict["current_date"] + ".sql'").read()
     # Check if backups directory exists locally
     if not os.path.exists("/srv/backups"):
         os.popen("mkdir /srv/backups")

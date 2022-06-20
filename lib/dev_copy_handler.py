@@ -66,7 +66,7 @@ def rsync_production_files(settings_dict):
         streamdata = child.communicate()[0]
         rc = child.returncode
     print(Colors.FG.LightGreen + Colors.Bold + "Starting " + action + Colors.Reset)
-    shell.run_bash_command_popen(False, False, action, "rsync -Pav -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
+    shell.run_bash_command_popen(False, False, action, "rsync -PavL -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
         "prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + ":" +
              settings_dict["prod_public_html"] + " /srv/", 1)
 

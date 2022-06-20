@@ -47,6 +47,7 @@ def dev_copy_default(config, path, media):
     Mage.static_content_deploy(config, settings_dict["prod_public_html"])
     cache.clear_all_reinit(config, settings_dict["prod_public_html"], 0)
     print(Colors.FG.LightGreen + action + " Complete!" + Colors.Reset)
+    menu.main_menu(settings_dict["prod_public_html"])
 
 
 def check_for_ssh_key(ssh_user):
@@ -66,9 +67,22 @@ def rsync_production_files(settings_dict):
         streamdata = child.communicate()[0]
         rc = child.returncode
     print(Colors.FG.LightGreen + Colors.Bold + "Starting " + action + Colors.Reset)
-    shell.run_bash_command_popen(False, False, action, "rsync -PavL -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
+    shell.run_bash_command_popen(False, False, action, "rsync -Pavl -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
         "prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + ":" +
-             settings_dict["prod_public_html"] + " /srv/", 1)
+             settings_dict["prod_public_html"] + " " + settings_dict["prod_public_html"], ".")
+    if settings_dict["symlink_folders"] is not False:
+        count = 2
+        folder_list = list(settings_dict["symlink_folders"])
+        for f in folder_list:
+            success_message = "." * count
+            shell.run_bash_command_popen(False, False, action,
+                                         "rsync -Pavl -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " +
+                                         settings_dict[
+                                             "prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" +
+                                         settings_dict["prod_ssh_host"] + ":" +
+                                         f + " " + f,
+                                         success_message)
+    print(Colors.FG.LightGreen + Colors.Bold + action + " Complete!" + Colors.Reset)
 
 
 class UserInput:
@@ -169,9 +183,9 @@ class UserInput:
     def get_prod_ssh_user(self):
         prod_ssh_user = input(Colors.FG.Yellow + "Production SSH User: " + Colors.Reset)
         self.settings_dict["prod_ssh_user"] = prod_ssh_user
-        self.get_prod_public_html()
+        self.get_prod_magento_root()
 
-    def get_prod_public_html(self):
+    def get_prod_magento_root(self):
         prod_public_html = input(Colors.FG.Yellow + "Production public_html path: " + Colors.Reset)
         if prod_public_html.endswith('/'):
             path_length = len(prod_public_html)
@@ -179,7 +193,29 @@ class UserInput:
         else:
             self.settings_dict["prod_public_html"] = prod_public_html
 
-        self.save_instance_config()
+
+    def get_prod_symlinks(self):
+        symlink_result = input(Colors.FG.Yellow + "Are there symlinks? (y/N): " + Colors.Reset)
+        if symlink_result.lower() == "y" or symlink_result.lower() == "yes":
+            folders = input(Colors.FG.Yellow + "Symlinked folders? (Comma Seperated): " + Colors.Reset)
+            if folders == "":
+                print(Colors.BG.Red + "Must give folder path or paths where symlinks are pointed." + Colors.Reset)
+                self.get_prod_symlinks()
+            input_list = folders.split(",")
+            folder_list = []
+            for f in input_list:
+                if f.endswith("/"):
+                    folder_list.append(f[:-1].replace(" ", ""))
+                else:
+                    folder_list.append(f.replace(" ", ""))
+            self.settings_dict["symlink_folders"] = folder_list
+        elif symlink_result == "" or symlink_result.lower() == "n" or symlink_result.lower() == "no":
+            self.settings_dict["symlink_folders"] = False
+            self.save_instance_config()
+        else:
+            print(Colors.BG.Red + "Must answer y or n." + Colors.Reset)
+            self.get_prod_symlinks()
+
 
     def save_instance_config(self):
         print(Colors.FG.LightGreen + Colors.Bold + "Saving Config....." + Colors.Reset)

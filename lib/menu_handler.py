@@ -348,7 +348,7 @@ def dev_copy_menu(config, path):
 
             choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
             if choice == "3":
-                dev_copy_menu(config, path)
+                main_menu(config)
             elif choice == "2":
                 dev_copy_menu(config, path)
             elif choice == "1":

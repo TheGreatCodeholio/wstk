@@ -141,7 +141,7 @@ def import_remote_database(settings_dict):
     os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict["dev_mysql_password"] + "' -e 'create database " + settings_dict["dev_mysql_database"] + "'").read()
     # Import Fixed Dump
     print(Colors.FG.LightGreen + Colors.Bold + "Importing Production Database to Dev." + Colors.Reset)
-    os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict["dev_mysql_password"] + "' " + settings_dict["dev_mysql_database"] + " < /srv/backups/db" + settings_dict["current_date"] + ".sql").read()
+    os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict["dev_mysql_password"] + "' " + settings_dict["dev_mysql_database"] + " < /srv/backups/db_" + settings_dict["current_date"] + ".sql").read()
     # Remove fixed database, keeping synced one for backup.
     os.popen("rm /srv/backups/db_" + settings_dict["current_date"] + ".sql")
     # Finished Import

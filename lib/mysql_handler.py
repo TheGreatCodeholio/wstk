@@ -134,7 +134,8 @@ def backup_remote_database(settings_dict):
 def import_remote_database(settings_dict):
     # Fix SUPER Privs
     print(Colors.FG.LightGreen + Colors.Bold + "Fixing Super Privileges." + Colors.Reset)
-    os.popen("sed -i 's/DEFINER=[^*]*\*/\*/g' /srv/backups/db_" + settings_dict["current_date"] + ".sql")
+    action = "Fix Super Privileges"
+    shell.run_bash_command_popen(False, False, action, "sed -i 's/DEFINER=[^*]*\*/\*/g' /srv/backups/db_" + settings_dict["current_date"] + ".sql", 1)
     # Drop Old Database
     os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict["dev_mysql_password"] + "' -e 'drop database " + settings_dict["dev_mysql_database"] + "'").read()
     # Create Blank Database

@@ -11,7 +11,7 @@ import lib.magento_handler as Mage
 import lib.cache_handler as cache
 from lib.text_color import Colors
 import lib.command_handler as shell
-import lib.magento_handler as mage
+import lib.rabbitmq_handler as Rabbit
 import lib.config_handler as conf
 import os
 
@@ -36,6 +36,7 @@ def dev_copy_default(config, path, media):
     config = conf.load_config(settings_dict["prod_public_html"])
     dev_config(settings_dict, config).init_config()
     config = conf.load_config(settings_dict["prod_public_html"])
+    Rabbit.check_rabbitmq(config, settings_dict["prod_public_html"], 0)
     Mage.reindex_all_index(config, settings_dict["prod_public_html"])
     Mage.magento_compile(config, settings_dict["prod_public_html"])
     Mage.static_content_deploy(config, settings_dict["prod_public_html"])

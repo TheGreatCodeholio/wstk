@@ -66,9 +66,9 @@ def rsync_production_files(settings_dict):
         streamdata = child.communicate()[0]
         rc = child.returncode
     print(Colors.FG.LightGreen + Colors.Bold + "RSYNC Prod Files to Dev." + Colors.Reset)
-    subprocess.Popen("rsync --info=progress2 --info=name0 -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
+    shell.run_bash_command_popen(False, False, "RSYNC Prod Files to Dev.", "rsync -Pav -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
         "prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + ":" +
-             settings_dict["prod_public_html"] + " /srv/", shell=True, stdout=subprocess.PIPE)
+             settings_dict["prod_public_html"] + " /srv/", "...")
 
 
 class UserInput:

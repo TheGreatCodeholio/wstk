@@ -70,8 +70,8 @@ def rsync_production_files(settings_dict):
     list_length = len(new) - 1
     for l in range(list_length):
         new_path += new[l] + "/"
-    if os.path.exists(new_path):
-        child = subprocess.Popen("rm -rf " + new_path, shell=True, stdout=subprocess.PIPE)
+    if os.path.exists(settings_dict["prod_public_html"]):
+        child = subprocess.Popen("rm -rf " + settings_dict["prod_public_html"], shell=True, stdout=subprocess.PIPE)
         streamdata = child.communicate()[0]
         rc = child.returncode
     print(Colors.FG.LightGreen + Colors.Bold + "Starting " + action + Colors.Reset)
@@ -82,6 +82,11 @@ def rsync_production_files(settings_dict):
         count = 2
         folder_list = list(settings_dict["symlink_folders"])
         for f in folder_list:
+            if os.path.exists(f):
+                child = subprocess.Popen("rm -rf " + f, shell=True,
+                                         stdout=subprocess.PIPE)
+                streamdata = child.communicate()[0]
+                rc = child.returncode
             new = f.split("/")
             for l in new:
                 if l == "":

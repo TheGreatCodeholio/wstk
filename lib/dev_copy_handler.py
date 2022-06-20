@@ -227,33 +227,30 @@ class UserInput:
             self.settings_dict["prod_public_html"] = prod_public_html
         self.get_prod_symlinks()
 
-
     def get_prod_symlinks(self):
-
-            print("ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict["prod_ssh_user"] + "@" +
-                self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
-                    "prod_ssh_port"] + " 'find " + self.settings_dict["prod_public_html"] + " -type l -ls | awk \"{print $13}\" > link.txt 2>&1; cat link.txt'")
-            dump_symlinks = os.popen(
-                "ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict["prod_ssh_user"] + "@" +
-                self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
-                    "prod_ssh_port"] + " 'find " + self.settings_dict["prod_public_html"] + " -type l -ls > link.txt 2>&1; cat link.txt'").read()
-            cred_file = open("remote_links.log", "w")
-            cred_file.write(dump_symlinks)
-            cred_file.close()
-            symlinks = os.popen("cat remote_links.log | awk '{print $13}'").read()
-            folders = symlinks.split("\n")
-            folder_list = []
-            for f in folders:
-                if f.startswith("/"):
-                    if f.endswith("/"):
-                        folder_list.append(f[:-1].replace(" ", ""))
-                    else:
-                        folder_list.append(f.replace(" ", ""))
-            if len(folder_list) < 1:
-                self.settings_dict["symlink_folders"] = False
-            else:
-                self.settings_dict["symlink_folders"] = folder_list
-            self.save_instance_config()
+        dump_symlinks = os.popen(
+            "ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict["prod_ssh_user"] + "@" +
+            self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
+                "prod_ssh_port"] + " 'find " + self.settings_dict["prod_public_html"] + " -type l -ls > link.txt 2>&1; cat link.txt'").read()
+        os.popen("ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict["prod_ssh_user"] + "@" +
+                 self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict["prod_ssh_port"] + " 'rm link.txt'")
+        cred_file = open("remote_links.log", "w")
+        cred_file.write(dump_symlinks)
+        cred_file.close()
+        symlinks = os.popen("cat remote_links.log | awk '{print $13}'").read()
+        folders = symlinks.split("\n")
+        folder_list = []
+        for f in folders:
+            if f.startswith("/"):
+                if f.endswith("/"):
+                    folder_list.append(f[:-1].replace(" ", ""))
+                else:
+                    folder_list.append(f.replace(" ", ""))
+        if len(folder_list) < 1:
+            self.settings_dict["symlink_folders"] = False
+        else:
+            self.settings_dict["symlink_folders"] = folder_list
+        self.save_instance_config()
 
     def save_instance_config(self):
         print(Colors.FG.LightGreen + Colors.Bold + "Saving Config....." + Colors.Reset)

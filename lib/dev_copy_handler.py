@@ -186,12 +186,13 @@ class UserInput:
         self.get_prod_magento_root()
 
     def get_prod_magento_root(self):
-        prod_public_html = input(Colors.FG.Yellow + "Production public_html path: " + Colors.Reset)
+        prod_public_html = input(Colors.FG.Yellow + "Production Magento Root path: " + Colors.Reset)
         if prod_public_html.endswith('/'):
             path_length = len(prod_public_html)
             self.settings_dict["prod_public_html"] = prod_public_html[:path_length - 1]
         else:
             self.settings_dict["prod_public_html"] = prod_public_html
+        self.get_prod_symlinks()
 
 
     def get_prod_symlinks(self):

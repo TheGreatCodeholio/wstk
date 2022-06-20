@@ -40,8 +40,9 @@ def dev_copy_default(config, path, media):
     rsync_production_files(settings_dict)
     print(Colors.FG.LightGreen + Colors.Bold + "Doing Dev Copy Configuration for Magento 2" + Colors.Reset)
     time.sleep(1.5)
+    config = conf.load_config(settings_dict["prod_public_html"])
     dev_config(settings_dict, config).init_config()
-    config = conf.load_config(path)
+    config = conf.load_config(settings_dict["prod_public_html"])
     Mage.reindex_all_index(config, settings_dict["prod_public_html"])
     Mage.magento_compile(config, settings_dict["prod_public_html"])
     Mage.static_content_deploy(config, settings_dict["prod_public_html"])
@@ -65,9 +66,9 @@ def rsync_production_files(settings_dict):
         streamdata = child.communicate()[0]
         rc = child.returncode
     print(Colors.FG.LightGreen + Colors.Bold + "RSYNC Prod Files to Dev." + Colors.Reset)
-    os.popen("rsync -Pav -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
+    subprocess.Popen("rsync --info=progress2 --info=name0 -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
         "prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + ":" +
-             settings_dict["prod_public_html"] + " /srv/").read()
+             settings_dict["prod_public_html"] + " /srv/", shell=True, stdout=subprocess.PIPE)
 
 
 class UserInput:

@@ -132,19 +132,16 @@ def backup_remote_database(settings_dict):
     # Finished with database backup.
 
 def import_remote_database(settings_dict):
-    # Check for old database, remove if it exists.
-    if os.path.exists("/srv/backups/fixed_dump.sql"):
-        os.popen("rm /srv/backups/fixed_dump.sql")
     # Fix SUPER Privs
     print(Colors.FG.LightGreen + Colors.Bold + "Fixing Super Privileges." + Colors.Reset)
-    os.popen("sed -i 's/DEFINER=[^*]*\*/\*/g' /srv/backups/db_" + settings_dict["current_date"] + ".sql > /srv/backups/fixed_dump.sql")
+    os.popen("sed -i 's/DEFINER=[^*]*\*/\*/g' /srv/backups/db_" + settings_dict["current_date"] + ".sql")
     # Drop Old Database
     os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict["dev_mysql_password"] + "' -e 'drop database " + settings_dict["dev_mysql_database"] + "'").read()
     # Create Blank Database
     os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict["dev_mysql_password"] + "' -e 'create database " + settings_dict["dev_mysql_database"] + "'").read()
     # Import Fixed Dump
     print(Colors.FG.LightGreen + Colors.Bold + "Importing Production Database to Dev." + Colors.Reset)
-    os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict["dev_mysql_password"] + "' " + settings_dict["dev_mysql_database"] + " < /srv/backups/fixed_dump.sql").read()
+    os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict["dev_mysql_password"] + "' " + settings_dict["dev_mysql_database"] + " < /srv/backups/db" + settings_dict["current_date"] + ".sql").read()
     # Remove fixed database, keeping synced one for backup.
-    os.popen("rm /srv/backups/fixed_dump.sql")
+    os.popen("rm /srv/backups/db_" + settings_dict["current_date"] + ".sql")
     # Finished Import

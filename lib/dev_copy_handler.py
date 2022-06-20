@@ -2,6 +2,7 @@ import datetime
 import json
 import re
 import subprocess
+import sys
 import time
 
 import lib.menu_handler as menu
@@ -21,7 +22,6 @@ def dev_copy_default(config, path, media):
     user_input = UserInput()
     # Put Data in to Dict
     settings_dict = user_input.settings_dict
-    settings_dict["prod_ssh_privkey_path"] = check_for_ssh_key(settings_dict["prod_ssh_user"])
     pub_key = os.popen("cat /srv/.ssh/" + settings_dict["prod_ssh_user"] + ".pub").read()
     print(Colors.FG.Yellow + "Add SSH Key to Production Stratus User: " + Colors.Reset + Colors.FG.LightGreen + settings_dict["prod_ssh_user"] + Colors.Reset)
     print(Colors.FG.LightBlue + pub_key + Colors.Reset)
@@ -210,6 +210,7 @@ class UserInput:
     def get_prod_ssh_user(self):
         prod_ssh_user = input(Colors.FG.Yellow + "Production SSH User: " + Colors.Reset)
         self.settings_dict["prod_ssh_user"] = prod_ssh_user
+        self.settings_dict["prod_ssh_privkey_path"] = check_for_ssh_key(self.settings_dict["prod_ssh_user"])
         self.get_prod_magento_root()
 
     def get_prod_magento_root(self):
@@ -225,18 +226,30 @@ class UserInput:
     def get_prod_symlinks(self):
         symlink_result = input(Colors.FG.Yellow + "Are there symlinks? (y/N): " + Colors.Reset)
         if symlink_result.lower() == "y" or symlink_result.lower() == "yes":
-            folders = input(Colors.FG.Yellow + "Symlinked folders? (Comma Seperated): " + Colors.Reset)
+            print("ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict["prod_ssh_user"] + "@" +
+                self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
+                    "prod_ssh_port"] + " 'find " + self.settings_dict["prod_public_html"] + " -type l -ls | awk \"{print $13}\" > link.txt 2>&1; cat link.txt'")
+            dump_symlinks = os.popen(
+                "ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict["prod_ssh_user"] + "@" +
+                self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
+                    "prod_ssh_port"] + " 'find " + self.settings_dict["prod_public_html"] + " -type l -ls > link.txt 2>&1; cat link.txt'").read()
+            cred_file = open("remote_links.log", "w")
+            cred_file.write(dump_symlinks)
+            cred_file.close()
+            symlinks = os.popen("cat remote_links.log | awk '{print $13}'").read()
+            folders = symlinks.split("\n")
             if folders == "":
-                print(Colors.BG.Red + "Must give folder path or paths where symlinks are pointed." + Colors.Reset)
+                print(Colors.BG.Red + "Doesn't seem to be any symlinks answer N not Y." + Colors.Reset)
                 self.get_prod_symlinks()
-            input_list = folders.split(",")
             folder_list = []
-            for f in input_list:
-                if f.endswith("/"):
-                    folder_list.append(f[:-1].replace(" ", ""))
-                else:
-                    folder_list.append(f.replace(" ", ""))
+            for f in folders:
+                if f.startswith("/"):
+                    if f.endswith("/"):
+                        folder_list.append(f[:-1].replace(" ", ""))
+                    else:
+                        folder_list.append(f.replace(" ", ""))
             self.settings_dict["symlink_folders"] = folder_list
+            self.save_instance_config()
         elif symlink_result == "" or symlink_result.lower() == "n" or symlink_result.lower() == "no":
             self.settings_dict["symlink_folders"] = False
             self.save_instance_config()

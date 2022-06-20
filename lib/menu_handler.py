@@ -325,13 +325,12 @@ def dev_copy_menu(config, path):
             print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Dev Copy Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
             print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Dev Copy Default" + Colors.Reset)
             print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Dev Copy No Media" + Colors.Reset)
-            print(Colors.FG.Green + "=>" + Colors.FG.LightGrey + " 3. " + Colors.FG.LightGrey + "Back" + Colors.Reset)
+            print(Colors.FG.Green + "=>" + Colors.FG.LightGrey + " 3. " + Colors.FG.LightGrey + "Exit" + Colors.Reset)
             print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
             choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
             if choice == "3":
-                print(Colors.FG.Pink + Colors.Bold + "Other Menus not available with no Magento Install." + Colors.Reset)
-                dev_copy_menu(config, path)
+                sys.exit()
             elif choice == "2":
                 dev_copy_menu(config, path)
             elif choice == "1":

@@ -97,7 +97,8 @@ def rsync_production_files(settings_dict):
                 new_path += new[p] + "/"
 
             success_message = "." * count
-            shell.run_bash_command_popen(False, False, action, "mkdir -p " + new_path, success_message)
+            if not os.path.exists(new_path):
+                shell.run_bash_command_popen(False, False, action, "mkdir -p " + new_path, success_message)
             count += 1
             success_message = "." * count
             shell.run_bash_command_popen(False, False, action,

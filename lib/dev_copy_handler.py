@@ -22,12 +22,6 @@ def dev_copy_default(config, path, media):
     user_input = UserInput()
     # Put Data in to Dict
     settings_dict = user_input.settings_dict
-    pub_key = os.popen("cat /srv/.ssh/" + settings_dict["prod_ssh_user"] + ".pub").read()
-    print(Colors.FG.Yellow + "Add SSH Key to Production Stratus User: " + Colors.Reset + Colors.FG.LightGreen + settings_dict["prod_ssh_user"] + Colors.Reset)
-    print(Colors.FG.LightBlue + pub_key + Colors.Reset)
-    dev_ip = os.popen("curl http://ipcheck.com/").read()
-    print(Colors.FG.Yellow + "Add SSH User " + Colors.Reset + Colors.FG.LightGreen + settings_dict["prod_ssh_user"] + Colors.Reset + Colors.FG.Yellow + " to Production whitelist and add IP address: " + Colors.Reset + Colors.FG.LightGreen + dev_ip + Colors.Reset)
-    input(Colors.FG.Yellow + "Press Any Key to continue..." + Colors.Reset)
     # Backup Source Database
     print(Colors.FG.LightGreen + Colors.Bold + "Starting Production Database Backup" + Colors.Reset)
     time.sleep(1.5)
@@ -211,6 +205,14 @@ class UserInput:
         prod_ssh_user = input(Colors.FG.Yellow + "Production SSH User: " + Colors.Reset)
         self.settings_dict["prod_ssh_user"] = prod_ssh_user
         self.settings_dict["prod_ssh_privkey_path"] = check_for_ssh_key(self.settings_dict["prod_ssh_user"])
+        pub_key = os.popen("cat /srv/.ssh/" + self.settings_dict["prod_ssh_user"] + ".pub").read()
+        print(Colors.FG.Yellow + "Add SSH Key to Production Stratus User: " + Colors.Reset + Colors.FG.LightGreen +
+              self.settings_dict["prod_ssh_user"] + Colors.Reset)
+        print(Colors.FG.LightBlue + pub_key + Colors.Reset)
+        dev_ip = os.popen("curl http://ipcheck.com/").read()
+        print(Colors.FG.Yellow + "Add SSH User " + Colors.Reset + Colors.FG.LightGreen + self.settings_dict[
+            "prod_ssh_user"] + Colors.Reset + Colors.FG.Yellow + " to Production whitelist and add IP address: " + Colors.Reset + Colors.FG.LightGreen + dev_ip + Colors.Reset)
+        input(Colors.FG.Yellow + "Press Any Key to continue..." + Colors.Reset)
         self.get_prod_magento_root()
 
     def get_prod_magento_root(self):

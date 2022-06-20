@@ -1,13 +1,10 @@
-import time
-
 import lib.menu_handler as menu
 from lib.text_color import Colors
 import lib.command_handler as shell
 import lib.magento_handler as mage
-import os
 
 
-def configure_elasticsearch(config, path):
+def configure_elasticsearch(config, path, menu_return):
     action = "Configure Database for Elastic Search"
     version = input("ElasticSearch version? 5, 6 or 7 (Default 7):")
     if version == "":
@@ -19,7 +16,7 @@ def configure_elasticsearch(config, path):
     elif version == "7":
         version = "elasticsearch7"
     else:
-        print("Versions can only be 5, 6, or 7: " + version)
+        print(Colors.FG.Yellow + "Versions can only be 5, 6, or 7: " + version + Colors.Reset)
         menu.main_menu(path)
 
     shell.run_bash_command(config, path, action,
@@ -49,8 +46,11 @@ def configure_elasticsearch(config, path):
                            ".......")
     print(Colors.FG.LightGreen + Colors.Bold + action + " Completed." + Colors.Reset)
     print(Colors.FG.LightGreen + Colors.Bold + "ElasticSearch Configured" + Colors.Reset)
-    menu.main_menu(path)
+    if menu_return == 1:
+        menu.elasticsearch_menu(config, path)
 
 
-def reindex_elasticsearch(config, path):
+def reindex_elasticsearch(config, path, menu_return):
     mage.reindex_one_index(config, path, "catalogsearch_fulltext")
+    if menu_return == 1:
+        menu.elasticsearch_menu(config, path)

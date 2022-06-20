@@ -25,7 +25,7 @@ def update_mysql_credentials_from_system(config, path, menu_return):
         menu.main_menu(path)
 
 
-def update_mysql_credentials_manual(config, path):
+def update_mysql_credentials_manual(config, path, menu_return):
     action = "Update MySQL Credentials"
     db_creds = {}
     db_creds["Name"] = input(Colors.FG.Yellow + "MySQL Database: " + Colors.Reset)
@@ -36,12 +36,13 @@ def update_mysql_credentials_manual(config, path):
         shell.run_bash_command_popen(config, path, action,
                                "php -ddisplay_errors=on " + path + "/bin/magento setup:config:set --db-host mysql --db-name " + db_creds[
                                    "Name"] + " --db-user " + db_creds["Username"] + " --db-password " + db_creds[
-                                   "Password"])
+                                   "Password"], 1)
         print(Colors.FG.LightGreen + Colors.Bold + action + " Completed!" + Colors.Reset)
     else:
         print(Colors.FG.Red + Colors.Bold + "Error getting database credentials." + Colors.Reset)
         print(Colors.FG.Red + Colors.Bold + action + " not completed. Returning to Menu." + Colors.Reset)
-    menu.main_menu(path)
+    if menu_return == 1:
+        menu.mysql_menu(config, path)
 
 
 def get_mysql_credentials():
@@ -66,14 +67,14 @@ def mysql_dump_auto(config, magento_root_path, backup_path, menu_return):
         os.remove(backup_path + "/" + current_date + "_" + config["db"]["connection"]["default"]["dbname"] + ".sql")
 
     action = "Database Backup"
-    shell.run_bash_command_popen(config, magento_root_path, action, "mysqldump --no-tablespaces --skip-lock-tables --opt --single-transaction --max_allowed_packet=512M -h mysql -u " + config["db"]["connection"]["default"]["username"] + " -p" + config["db"]["connection"]["default"]["password"] + " " + config["db"]["connection"]["default"]["dbname"] + " > " + backup_path + "/" + current_date + "_" + config["db"]["connection"]["default"]["dbname"] + ".sql")
+    shell.run_bash_command_popen(config, magento_root_path, action, "mysqldump --no-tablespaces --skip-lock-tables --opt --single-transaction --max_allowed_packet=512M -h mysql -u " + config["db"]["connection"]["default"]["username"] + " -p" + config["db"]["connection"]["default"]["password"] + " " + config["db"]["connection"]["default"]["dbname"] + " > " + backup_path + "/" + current_date + "_" + config["db"]["connection"]["default"]["dbname"] + ".sql", 1)
     print(Colors.FG.LightGreen + Colors.Bold + "MySQL Database Backed up to: " + backup_path + "/" + current_date + "_" + config["db"]["connection"]["default"][
         "dbname"] + ".sql" + Colors.Reset)
 
     if menu_return == 1:
         menu.mysql_menu(config, magento_root_path)
 
-def mysql_dump_manual(config, magento_root_path):
+def mysql_dump_manual(config, magento_root_path, menu_return):
     x = datetime.datetime.now()
     current_date = x.strftime("%d%B%y")
     backup_path = input(Colors.FG.Yellow + "Path to dump database to? Default: /srv/backups: " + Colors.Reset)
@@ -101,6 +102,49 @@ def mysql_dump_manual(config, magento_root_path):
                            db_username + " -p" +
                            db_password + " " +
                            db_name + " > " + backup_path + "/" + current_date + "_" +
-                           db_name + ".sql")
-    print(Colors.FG.LightGreen + Colors.Bold + "MySQL Database Backedup to: " + backup_path + "/" + current_date + "_" + db_name + ".sql" + Colors.Reset)
-    menu.main_menu(magento_root_path)
+                           db_name + ".sql", 1)
+    print(Colors.FG.LightGreen + Colors.Bold + "MySQL Database Backed up to: " + backup_path + "/" + current_date + "_" + db_name + ".sql" + Colors.Reset)
+    if menu_return == 1:
+        menu.mysql_menu(config, magento_root_path)
+
+def backup_remote_database(settings_dict):
+    # Get Remote Database Credentials via SSH
+    print(Colors.FG.LightGreen + Colors.Bold + "Getting Production Database Credentials." + Colors.Reset)
+    dump_creds = os.popen("ssh -i " + settings_dict["prod_ssh_privkey_path"] + " " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + " -p" + settings_dict["prod_ssh_port"] + " '/usr/share/stratus/cli database.config > cred.log 2>&1; cat cred.log'").read()
+    os.popen("ssh -i " + settings_dict["prod_ssh_privkey_path"] + " " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + " -p" + settings_dict["prod_ssh_port"] + " 'rm cred.log'")
+    cred_file = open("remote_creds.log", "w")
+    cred_file.write(dump_creds)
+    cred_file.close()
+    # Read Credentials to our settings Dictionary
+    settings_dict["prod_mysql_user"] = os.popen("cat remote_creds.log | grep Username | awk '{print $3}' | cut -c3- | rev | cut -c4- | rev").read().split('\n')[0]
+    settings_dict["prod_mysql_database"] = os.popen("cat remote_creds.log | grep Username | awk '{print $7}' | cut -c3- | rev | cut -c4- | rev").read().split('\n')[0]
+    settings_dict["prod_mysql_password"] = os.popen("cat remote_creds.log | grep Username | awk '{print $14}' | cut -c3- | rev | cut -c4- | rev").read().split('\n')[0]
+    os.popen("rm remote_creds.log")
+    # MySQL Dump Database
+    print(Colors.FG.LightGreen + Colors.Bold + "Dumping Production Database." + Colors.Reset)
+    os.popen("ssh -i " + settings_dict["prod_ssh_privkey_path"] + " " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + " -p" + settings_dict["prod_ssh_port"] + " 'mysqldump --skip-lock-tables --extended-insert=FALSE --verbose -h mysql --quick -u " + settings_dict["prod_mysql_user"] + " -p" + settings_dict["prod_mysql_password"] + " " + settings_dict["prod_mysql_database"] + " > /srv/db_" + settings_dict["current_date"] + ".sql'").read()
+    # Check if backups directory exists locally
+    if not os.path.exists("/srv/backups"):
+        os.popen("mkdir /srv/backups")
+    # RSYNC Database Dump to Local backups folder.
+    print(Colors.FG.LightGreen + Colors.Bold + "RSYNC Production Database to Dev." + Colors.Reset)
+    os.popen("rsync -Pav -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict["prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + ":/srv/db_" + settings_dict["current_date"] + ".sql /srv/backups/").read()
+    # Finished with database backup.
+
+def import_remote_database(settings_dict):
+    # Check for old database, remove if it exists.
+    if os.path.exists("/srv/backups/fixed_dump.sql"):
+        os.popen("rm /srv/backups/fixed_dump.sql")
+    # Fix SUPER Privs
+    print(Colors.FG.LightGreen + Colors.Bold + "Fixing Super Privileges." + Colors.Reset)
+    os.popen("sed -i 's/DEFINER=[^*]*\*/\*/g' /srv/backups/db_" + settings_dict["current_date"] + ".sql > /srv/backups/fixed_dump.sql")
+    # Drop Old Database
+    os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict["dev_mysql_password"] + "' -e 'drop database " + settings_dict["dev_mysql_database"] + "'").read()
+    # Create Blank Database
+    os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict["dev_mysql_password"] + "' -e 'create database " + settings_dict["dev_mysql_database"] + "'").read()
+    # Import Fixed Dump
+    print(Colors.FG.LightGreen + Colors.Bold + "Importing Production Database to Dev." + Colors.Reset)
+    os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict["dev_mysql_password"] + "' " + settings_dict["dev_mysql_database"] + " < /srv/backups/fixed_dump.sql").read()
+    # Remove fixed database, keeping synced one for backup.
+    os.popen("rm /srv/backups/fixed_dump.sql")
+    # Finished Import

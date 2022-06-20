@@ -71,9 +71,9 @@ def redis_menu(config, path):
         if choice == "3":
             main_menu(path)
         elif choice == "2":
-            Redis.check_redis_cache(config, path)
+            Redis.check_redis_cache(config, path, 1)
         elif choice == "1":
-            Redis.check_redis_sessions(config, path)
+            Redis.check_redis_sessions(config, path, 1)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
             redis_menu(config, path)
@@ -92,7 +92,7 @@ def rabbit_menu(config, path):
         if choice == "2":
             main_menu(path)
         elif choice == "1":
-            Rabbit.check_rabbitmq(config, path)
+            Rabbit.check_rabbitmq(config, path, 1)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
             rabbit_menu(config, path)
@@ -157,9 +157,9 @@ def magento_patch_menu(config, path):
         if choice == "3":
             main_menu(path)
         elif choice == "2":
-            Patches.install_pdo_adapter_mysql8(config, path)
+            Patches.install_pdo_adapter_mysql8(config, path, 1)
         elif choice == "1":
-            Patches.install_catalog_rabbitmq(config, path)
+            Patches.install_catalog_rabbitmq(config, path, 1)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
             magento_patch_menu(config, path)
@@ -181,15 +181,15 @@ def magento_backup_menu(config, path):
         if choice == "6":
             main_menu(path)
         elif choice == "5":
-            Backup.backup_local_custom(config, path, 0)
+            Backup.backup_local_custom(config, path, 0, 1)
         elif choice == "4":
-            Backup.backup_local_custom(config, path, 1)
+            Backup.backup_local_custom(config, path, 1, 1)
         elif choice == "3":
-            Backup.backup_local_auto(config, path, 0)
+            Backup.backup_local_auto(config, path, 0, 1)
         elif choice == "2":
-            Backup.backup_local_auto(config, path, 1)
+            Backup.backup_local_auto(config, path, 1, 1)
         elif choice == "1":
-            Backup.backup_to_s3_bucket(config, path)
+            Backup.backup_to_s3_bucket(config, path, 1)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
             magento_patch_menu(config, path)
@@ -208,9 +208,9 @@ def varnish_menu(config, path):
         if choice == "3":
             main_menu(path)
         elif choice == "2":
-            Varnish.purge_varnish(config, path)
+            Varnish.purge_varnish(config, path, 1)
         elif choice == "1":
-            Varnish.check_varnish(config, path)
+            Varnish.check_varnish(config, path, 1)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
             varnish_menu(config, path)
@@ -230,9 +230,9 @@ def cron_menu(config, path):
         if choice == "3":
             main_menu(path)
         elif choice == "2":
-            Cron.reset_crons(config, path)
+            Cron.reset_crons(config, path, 1)
         elif choice == "1":
-            Cron.install_mmcron(config, path)
+            Cron.install_mmcron(config, path, 1)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
             cron_menu(config, path)
@@ -255,15 +255,15 @@ def cache_menu(config, path):
         if choice == "6":
             main_menu(path)
         elif choice == "5":
-            Cache.reinit_as(config, path)
+            Cache.reinit_as(config, path, 1)
         elif choice == "4":
-            Cache.clear_cloudfront(config, path)
+            Cache.clear_cloudfront(config, path, 1)
         elif choice == "3":
-            Cache.clear_redis(config, path)
+            Cache.clear_redis(config, path, 1)
         elif choice == "2":
-            Cache.clear_magento(config, path)
+            Cache.clear_magento(config, path, 1)
         elif choice == "1":
-            Cache.clear_all(config, path)
+            Cache.clear_all(config, path, 1)
 
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
@@ -286,13 +286,13 @@ def mysql_menu(config, path):
         if choice == "5":
             main_menu(path)
         elif choice == "4":
-            Mysql.mysql_dump_manual(config, path)
+            Mysql.mysql_dump_manual(config, path, 1)
         elif choice == "3":
             Mysql.mysql_dump_auto(config, path, "/srv/backups", 1)
         elif choice == "2":
-            Mysql.update_mysql_credentials_manual(config, path)
+            Mysql.update_mysql_credentials_manual(config, path, 1)
         elif choice == "1":
-            Mysql.update_mysql_credentials_from_system(config, path)
+            Mysql.update_mysql_credentials_from_system(config, path, 1)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
             mysql_menu(config, path)
@@ -311,9 +311,9 @@ def elasticsearch_menu(config, path):
         if choice == "3":
             main_menu(path)
         elif choice == "2":
-            ElasticSearch.reindex_elasticsearch(config, path)
+            ElasticSearch.reindex_elasticsearch(config, path, 1)
         elif choice == "1":
-            ElasticSearch.configure_elasticsearch(config, path)
+            ElasticSearch.configure_elasticsearch(config, path, 1)
         else:
             print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
             elasticsearch_menu(config, path)
@@ -321,20 +321,38 @@ def elasticsearch_menu(config, path):
 def dev_copy_menu(config, path):
     choice = '0'
     while choice == '0':
-        print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Dev Copy Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Dev Copy Default" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Dev Copy No Media" + Colors.Reset)
-        print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
-        print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
+        if config is False and path is False:
+            print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Dev Copy Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+            print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Dev Copy Default" + Colors.Reset)
+            print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Dev Copy No Media" + Colors.Reset)
+            print(Colors.FG.Green + "=>" + Colors.FG.LightGrey + " 3. " + Colors.FG.LightGrey + "Back" + Colors.Reset)
+            print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
 
-        choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
-
-        if choice == "3":
-            main_menu(path)
-        elif choice == "2":
-            dev_copy_menu(config, path)
-        elif choice == "1":
-            Dev.dev_copy_default(config, path, 1)
+            choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
+            if choice == "3":
+                print(Colors.FG.Pink + Colors.Bold + "Other Menus not available with no Magento Install." + Colors.Reset)
+                dev_copy_menu(config, path)
+            elif choice == "2":
+                dev_copy_menu(config, path)
+            elif choice == "1":
+                Dev.dev_copy_default(config, path, 1)
+            else:
+                print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
+                dev_copy_menu(config, path)
         else:
-            print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
-            magento_patch_menu(config, path)
+            print(Colors.FG.Green + "++++++=> " + Colors.FG.LightBlue + "Dev Copy Menu:" + Colors.FG.Green + " <=++++++" + Colors.Reset)
+            print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 1. " + Colors.FG.LightBlue + "Dev Copy Default" + Colors.Reset)
+            print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 2. " + Colors.FG.LightBlue + "Dev Copy No Media" + Colors.Reset)
+            print(Colors.FG.Green + "=>" + Colors.FG.Yellow + " 3. " + Colors.FG.LightBlue + "Back" + Colors.Reset)
+            print(Colors.FG.Green + "+---------=> " + Colors.FG.Yellow + "Version " + version + " " + Colors.FG.Green + "<=---------+" + Colors.Reset)
+
+            choice = input(Colors.FG.Yellow + "Choose Menu Item: " + Colors.Reset)
+            if choice == "3":
+                dev_copy_menu(config, path)
+            elif choice == "2":
+                dev_copy_menu(config, path)
+            elif choice == "1":
+                Dev.dev_copy_default(config, path, 1)
+            else:
+                print(Colors.FG.Red + Colors.Bold + "Invalid menu choice." + Colors.Reset)
+                main_menu(config)

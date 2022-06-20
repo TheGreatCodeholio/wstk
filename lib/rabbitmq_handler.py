@@ -5,18 +5,18 @@ import lib.command_handler as shell
 from subprocess import check_output
 
 
-def check_rabbitmq(config, path):
+def check_rabbitmq(config, path, menu_return):
     if "queue" not in config:
-        config_rabbitmq(config, path)
+        config_rabbitmq(config, path, menu_return)
     elif "amqp" in config["queue"]:
         del config["queue"]
         conf.save_config(config, path)
-        config_rabbitmq(config, path)
+        config_rabbitmq(config, path, menu_return)
     else:
-        config_rabbitmq(config, path)
+        config_rabbitmq(config, path, menu_return)
 
 
-def config_rabbitmq(config, path):
+def config_rabbitmq(config, path, menu_return):
     action = "RabbitMQ Configuration"
     rabbit_password = input(Colors.FG.Yellow + "RabbitMQ Password:" + Colors.Reset)
     shell.run_bash_command(config, path, action, "php -ddisplay_errors=on " + path + "/bin/magento setup:config:set --amqp-host=rabbitmq --amqp-port=5672 --amqp-user=username --amqp-password=" + rabbit_password + " --amqp-virtualhost=/", "..")
@@ -32,4 +32,5 @@ def config_rabbitmq(config, path):
     config["cron_consumers_runner"]["consumers"] = consumers.decode("utf-8").splitlines()
     conf.save_config(config, path)
     print(Colors.FG.LightGreen + Colors.Bold + action + " Completed!" + Colors.Reset)
-    menu.main_menu(path)
+    if menu_return == 1:
+        menu.rabbit_menu(config, path)

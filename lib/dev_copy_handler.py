@@ -23,21 +23,18 @@ def dev_copy_default(config, path, media):
     settings_dict = user_input.settings_dict
     settings_dict["prod_ssh_privkey_path"] = check_for_ssh_key(settings_dict["prod_ssh_user"])
     pub_key = os.popen("cat /srv/.ssh/" + settings_dict["prod_ssh_user"] + ".pub").read()
-    print(Colors.FG.Yellow + "Add SSH Key to Production Stratus User: " + Colors.Reset + Colors.FG.LightGreen +
-          settings_dict[
-              "prod_ssh_user"] + Colors.Reset)
+    print(Colors.FG.Yellow + "Add SSH Key to Production Stratus User: " + Colors.Reset + Colors.FG.LightGreen + settings_dict["prod_ssh_user"] + Colors.Reset)
     print(Colors.FG.LightBlue + pub_key + Colors.Reset)
     dev_ip = os.popen("curl http://ipcheck.com/").read()
-    print(Colors.FG.Yellow + "Add SSH User " + Colors.Reset + Colors.FG.LightGreen + settings_dict[
-        "prod_ssh_user"] + Colors.Reset + Colors.FG.Yellow + " to Production whitelist and add IP address: " + Colors.Reset + Colors.FG.LightGreen + dev_ip + Colors.Reset)
+    print(Colors.FG.Yellow + "Add SSH User " + Colors.Reset + Colors.FG.LightGreen + settings_dict["prod_ssh_user"] + Colors.Reset + Colors.FG.Yellow + " to Production whitelist and add IP address: " + Colors.Reset + Colors.FG.LightGreen + dev_ip + Colors.Reset)
     input(Colors.FG.Yellow + "Press Any Key to continue..." + Colors.Reset)
     # Backup Source Database
     print(Colors.FG.LightGreen + Colors.Bold + "Starting Production Database Backup" + Colors.Reset)
     time.sleep(1.5)
-    backup_source_database(settings_dict)
+    Mysql.backup_remote_database(settings_dict)
     print(Colors.FG.LightGreen + Colors.Bold + "Starting Database Import From Production" + Colors.Reset)
     time.sleep(1.5)
-    import_source_database(settings_dict)
+    Mysql.import_remote_database(settings_dict)
     print(Colors.FG.LightGreen + Colors.Bold + "Starting RSYNC Files From Production" + Colors.Reset)
     time.sleep(1.5)
     rsync_production_files(settings_dict)
@@ -48,7 +45,7 @@ def dev_copy_default(config, path, media):
     Mage.reindex_all_index(config, settings_dict["prod_public_html"])
     Mage.magento_compile(config, settings_dict["prod_public_html"])
     Mage.static_content_deploy(config, settings_dict["prod_public_html"])
-    cache.clear_all_reinit(config, settings_dict["prod_public_html"])
+    cache.clear_all_reinit(config, settings_dict["prod_public_html"], 0)
     print(Colors.FG.LightGreen + action + " Complete!" + Colors.Reset)
 
 
@@ -60,76 +57,6 @@ def check_for_ssh_key(ssh_user):
         print(Colors.FG.LightGreen + "Creating Key for " + Colors.Reset + Colors.FG.LightBlue + ssh_user + Colors.Reset)
         os.popen("ssh-keygen -t rsa -N \"\" -f ~/.ssh/" + ssh_user).read()
         return "/srv/.ssh/" + ssh_user
-
-
-def backup_source_database(settings_dict):
-    # Get Remote Database Credentials via SSH
-    print(Colors.FG.LightGreen + Colors.Bold + "Getting Production Database Credentials." + Colors.Reset)
-    dump_creds = os.popen(
-        "ssh -i " + settings_dict["prod_ssh_privkey_path"] + " " + settings_dict["prod_ssh_user"] + "@" + settings_dict[
-            "prod_ssh_host"] + " -p" + settings_dict[
-            "prod_ssh_port"] + " '/usr/share/stratus/cli database.config > cred.log 2>&1; cat cred.log'").read()
-    os.popen(
-        "ssh -i " + settings_dict["prod_ssh_privkey_path"] + " " + settings_dict["prod_ssh_user"] + "@" + settings_dict[
-            "prod_ssh_host"] + " -p" + settings_dict["prod_ssh_port"] + " 'rm cred.log'")
-    cred_file = open("remote_creds.log", "w")
-    cred_file.write(dump_creds)
-    cred_file.close()
-    # Read Credentials to our settings Dictionary
-    settings_dict["prod_mysql_user"] = \
-        os.popen(
-            "cat remote_creds.log | grep Username | awk '{print $3}' | cut -c3- | rev | cut -c4- | rev").read().split(
-            '\n')[0]
-    settings_dict["prod_mysql_database"] = \
-        os.popen(
-            "cat remote_creds.log | grep Username | awk '{print $7}' | cut -c3- | rev | cut -c4- | rev").read().split(
-            '\n')[0]
-    settings_dict["prod_mysql_password"] = \
-        os.popen(
-            "cat remote_creds.log | grep Username | awk '{print $14}' | cut -c3- | rev | cut -c4- | rev").read().split(
-            '\n')[0]
-    os.popen("rm remote_creds.log")
-    # MySQL Dump Database
-    print(Colors.FG.LightGreen + Colors.Bold + "Dumping Production Database." + Colors.Reset)
-    os.popen(
-        "ssh -i " + settings_dict["prod_ssh_privkey_path"] + " " + settings_dict["prod_ssh_user"] + "@" + settings_dict[
-            "prod_ssh_host"] + " -p" + settings_dict[
-            "prod_ssh_port"] + " 'mysqldump --skip-lock-tables --extended-insert=FALSE --verbose -h mysql --quick -u " +
-        settings_dict["prod_mysql_user"] + " -p" + settings_dict["prod_mysql_password"] + " " + settings_dict[
-            "prod_mysql_database"] + " > /srv/db_" + settings_dict["current_date"] + ".sql'").read()
-    # Check if backups directory exists locally
-    if not os.path.exists("/srv/backups"):
-        os.popen("mkdir /srv/backups")
-    # RSYNC Database Dump to Local backups folder.
-    print(Colors.FG.LightGreen + Colors.Bold + "RSYNC Production Database to Dev." + Colors.Reset)
-    os.popen("rsync -Pav -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
-        "prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" + settings_dict[
-                 "prod_ssh_host"] + ":/srv/db_" + settings_dict["current_date"] + ".sql /srv/backups/").read()
-    # Finished with database backup.
-
-
-def import_source_database(settings_dict):
-    # Check for old database, remove if it exists.
-    if os.path.exists("/srv/backups/fixed_dump.sql"):
-        os.popen("rm /srv/backups/fixed_dump.sql")
-    # Fix SUPER Privs
-    print(Colors.FG.LightGreen + Colors.Bold + "Fixing Super Privileges." + Colors.Reset)
-    os.popen("sed -E 's/DEFINER=`[^`]+`@`[^`]+`/DEFINER=CURRENT_USER/g' /srv/backups/db_" + settings_dict[
-        "current_date"] + ".sql > /srv/backups/fixed_dump.sql")
-    # Drop Old Database
-    os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict[
-        "dev_mysql_password"] + "' -e 'drop database " + settings_dict["dev_mysql_database"] + "'").read()
-    # Create Blank Database
-    os.popen("mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict[
-        "dev_mysql_password"] + "' -e 'create database " + settings_dict["dev_mysql_database"] + "'").read()
-    # Import Fixed Dump
-    print(Colors.FG.LightGreen + Colors.Bold + "Importing Production Database to Dev." + Colors.Reset)
-    os.popen(
-        "mysql -h mysql -u " + settings_dict["dev_mysql_user"] + " -p'" + settings_dict["dev_mysql_password"] + "' " +
-        settings_dict["dev_mysql_database"] + " < /srv/backups/fixed_dump.sql").read()
-    # Remove fixed database, keeping synced one for backup.
-    os.popen("rm /srv/backups/fixed_dump.sql")
-    # Finished Import
 
 
 def rsync_production_files(settings_dict):

@@ -62,9 +62,7 @@ def rsync_production_files(settings_dict):
 
     # remove the root path on dev instance
     if os.path.exists(settings_dict["prod_public_html"]):
-        child = subprocess.Popen("rm -rf " + settings_dict["prod_public_html"], shell=True, stdout=subprocess.PIPE)
-        streamdata = child.communicate()[0]
-        rc = child.returncode
+        shell.run_bash_command_popen(False, False, action, "rm -rf " + settings_dict["prod_public_html"], "")
 
     print(Colors.FG.LightGreen + Colors.Bold + "Starting " + action + Colors.Reset)
     if settings_dict["root_is_symlink"] is True:
@@ -77,6 +75,11 @@ def rsync_production_files(settings_dict):
         list_length = len(new) - 1
         for l in range(list_length):
             new_path += new[l] + "/"
+
+        if not os.path.exists(new_path):
+            child = subprocess.Popen("mkdir -p " + new_path, shell=True, stdout=subprocess.PIPE)
+            streamdata = child.communicate()[0]
+            rc = child.returncode
 
         # rsync link path to dev from production
         shell.run_bash_command_popen(False, False, action,
@@ -101,6 +104,11 @@ def rsync_production_files(settings_dict):
         list_length = len(new) - 1
         for l in range(list_length):
             new_path += new[l] + "/"
+
+        if not os.path.exists(new_path):
+            child = subprocess.Popen("mkdir -p " + new_path, shell=True, stdout=subprocess.PIPE)
+            streamdata = child.communicate()[0]
+            rc = child.returncode
 
         # rsync root from production to dev using rsync target
         shell.run_bash_command_popen(False, False, action, "rsync -Pavl -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
@@ -270,7 +278,7 @@ class UserInput:
             "ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict[
                 "prod_ssh_user"] + "@" + self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
                 "prod_ssh_port"] + " 'stat " + self.settings_dict[
-                "prod_public_html"] + " | head -n1 > sym_check.log; cat sym_check.log").read()
+                "prod_public_html"] + " | head -n1 > sym_check.log; cat sym_check.log'").read()
         os.popen("ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict[
             "prod_ssh_user"] + "@" + self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
                      "prod_ssh_port"] + " 'rm sym_check.log'")
@@ -292,7 +300,7 @@ class UserInput:
             dump_root_symlink = os.popen(
                 "ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict[
                     "prod_ssh_user"] + "@" + self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
-                    "prod_ssh_port"] + " 'find " + new_path + " -type l -ls > root_link.log; cat root_link.log").read()
+                    "prod_ssh_port"] + " 'find " + new_path + " -type l -ls > root_link.log; cat root_link.log'").read()
             os.popen("ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict[
                 "prod_ssh_user"] + "@" + self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
                          "prod_ssh_port"] + " 'rm root_link.log'")
@@ -312,7 +320,7 @@ class UserInput:
                     if full_folder_path == self.settings_dict["prod_public_html"]:
                         self.settings_dict["root_symlink"] = {"folder_path": full_folder_path,
                                                               "link_path": full_link_path}
-                self.get_prod_symlinks_inside_root_magento()
+            self.get_prod_symlinks_inside_root_magento()
         else:
             self.settings_dict["root_is_symlink"] = False
             self.get_prod_symlinks_inside_root_magento()
@@ -321,7 +329,7 @@ class UserInput:
         dump_symlinks = os.popen(
             "ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict["prod_ssh_user"] + "@" +
             self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
-                "prod_ssh_port"] + " 'find " + self.settings_dict["prod_public_html"] + " -type l -ls > link.txt 2>&1; cat link.txt'").read()
+                "prod_ssh_port"] + " 'find " + self.settings_dict["prod_public_html"] + "\ -type l -ls > link.txt 2>&1; cat link.txt'").read()
         os.popen("ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict["prod_ssh_user"] + "@" +
                  self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict["prod_ssh_port"] + " 'rm link.txt'")
         cred_file = open("remote_links.log", "w")

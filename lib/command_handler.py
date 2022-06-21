@@ -10,6 +10,8 @@ def run_bash_command_popen(config, path, action, command, success_message):
     if rc == 0:
         if success_message == 1:
             print(Colors.FG.LightGreen + Colors.Bold + action + " complete." + Colors.Reset)
+        elif success_message == "":
+            return
         else:
             print(Colors.FG.LightGreen + Colors.Bold + success_message + Colors.Reset)
     else:

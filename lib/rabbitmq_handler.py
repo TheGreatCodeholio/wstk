@@ -18,12 +18,21 @@ def check_rabbitmq(config, path, menu_return):
 
 def config_rabbitmq(config, path, menu_return):
     action = "RabbitMQ Configuration"
+    config = conf.load_config(path)
     rabbit_password = input(Colors.FG.Yellow + "RabbitMQ Password:" + Colors.Reset)
-    shell.run_bash_command(config, path, action, "php -ddisplay_errors=on " + path + "/bin/magento setup:config:set --amqp-host=rabbitmq --amqp-port=5672 --amqp-user=username --amqp-password=" + rabbit_password + " --amqp-virtualhost=/", "..")
+    config["queue"] = {}
+    config["queue"]["amqp"] = {}
+    config["queue"]["amqp"]["host"] = "rabbitmq"
+    config["queue"]["amqp"]["port"] = "5672"
+    config["queue"]["amqp"]["user"] = "username"
+    config["queue"]["amqp"]["password"] = rabbit_password
+    config["queue"]["amqp"]["virtualhost"] = "/"
+    config["queue"]["amqp"]["ssl"] = "false"
+    config["queue"]["amqp"]["ssl_options"] = {}
 
     consumers = check_output(['php', path + '/bin/magento', 'queue:consumers:list'])
 
-    config = conf.load_config(path)
+
     if "cron_consumers_runner" in config:
         del config["cron_consumers_runner"]
     config["cron_consumers_runner"] = {}

@@ -59,31 +59,65 @@ def check_for_ssh_key(ssh_user):
 
 def rsync_production_files(settings_dict):
     action = "RSYNC Prod Files to Dev."
-    new = settings_dict["prod_public_html"].split("/")
-    for l in new:
-        if l == "":
-            new.remove(l)
-    new_path = "/"
-    list_length = len(new) - 1
-    for l in range(list_length):
-        new_path += new[l] + "/"
+
+    # remove the root path on dev instance
     if os.path.exists(settings_dict["prod_public_html"]):
         child = subprocess.Popen("rm -rf " + settings_dict["prod_public_html"], shell=True, stdout=subprocess.PIPE)
         streamdata = child.communicate()[0]
         rc = child.returncode
+
     print(Colors.FG.LightGreen + Colors.Bold + "Starting " + action + Colors.Reset)
-    shell.run_bash_command_popen(False, False, action, "rsync -Pavl -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
-        "prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + ":" +
-             settings_dict["prod_public_html"] + " " + new_path, ".")
+    if settings_dict["root_is_symlink"] is True:
+        # remove last portion of link path for rsync target
+        new = settings_dict["root_symlink"]["link_path"].split("/")
+        for l in new:
+            if l == "":
+                new.remove(l)
+        new_path = "/"
+        list_length = len(new) - 1
+        for l in range(list_length):
+            new_path += new[l] + "/"
+
+        # rsync link path to dev from production
+        shell.run_bash_command_popen(False, False, action,
+                                     "rsync -Pavl -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " +
+                                     settings_dict[
+                                         "prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" +
+                                     settings_dict["prod_ssh_host"] + ":" +
+                                     settings_dict["root_symlink"]["link_path"] + " " + new_path, ".")
+        # recreate symlink
+        shell.run_bash_command(False, False, action,
+            "ssh -i " + settings_dict["prod_ssh_privkey_path"] + " " + settings_dict[
+                "prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + " -p" + settings_dict[
+                "prod_ssh_port"] + " 'ln -s " + settings_dict["root_symlink"]["link_path"] + " " + settings_dict[
+                "prod_public_html"], "..")
+    else:
+        # remove last portion of root path for rsync target
+        new = settings_dict["prod_public_html"].split("/")
+        for l in new:
+            if l == "":
+                new.remove(l)
+        new_path = "/"
+        list_length = len(new) - 1
+        for l in range(list_length):
+            new_path += new[l] + "/"
+
+        # rsync root from production to dev using rsync target
+        shell.run_bash_command_popen(False, False, action, "rsync -Pavl -e 'ssh -p " + settings_dict["prod_ssh_port"] + " -i " + settings_dict[
+            "prod_ssh_privkey_path"] + "' " + settings_dict["prod_ssh_user"] + "@" + settings_dict["prod_ssh_host"] + ":" +
+                 settings_dict["prod_public_html"] + " " + new_path, ".")
+        # print second set of . to keep visual progress.
+        print(Colors.FG.LightGreen + Colors.Bold + ".." + Colors.Reset)
+
+    # check if we have folder inside root that are symlinks
     if settings_dict["symlink_folders"] is not False:
-        count = 2
+        count = 3
         folder_list = list(settings_dict["symlink_folders"])
         for f in folder_list:
+            # remove folder on dev if exists
             if os.path.exists(f):
-                child = subprocess.Popen("rm -rf " + f, shell=True,
-                                         stdout=subprocess.PIPE)
-                streamdata = child.communicate()[0]
-                rc = child.returncode
+                shell.run_bash_command_popen(False, False, action, "rm -rf " + f, "")
+            # remove last folder of path ex "/srv/public_html/var" to "/srv/public_html"
             new = f.split("/")
             for l in new:
                 if l == "":
@@ -94,6 +128,7 @@ def rsync_production_files(settings_dict):
                 new_path += new[p] + "/"
 
             success_message = "." * count
+            # create directory if it doesn't exist
             if not os.path.exists(new_path):
                 shell.run_bash_command_popen(False, False, action, "mkdir -p " + new_path, success_message)
             count += 1
@@ -157,7 +192,6 @@ class UserInput:
             db_creds["Name"] = input(Colors.FG.Yellow + "Dev MySQL Database Name: " + Colors.Reset)
             db_creds["Username"] = input(Colors.FG.Yellow + "Dev MySQL Username: " + Colors.Reset)
             db_creds["Password"] = input(Colors.FG.Yellow + "Dev MySQL Password: " + Colors.Reset)
-            # TODO Sanitize Input
             self.settings_dict["dev_mysql_user"] = db_creds["Username"]
             self.settings_dict["dev_mysql_database"] = db_creds["Name"]
             self.settings_dict["dev_mysql_password"] = db_creds["Password"]
@@ -182,6 +216,19 @@ class UserInput:
                 self.settings_dict["dev_base_url"] = base_url
         else:
             self.settings_dict["dev_base_url"] = streamdata.decode('UTF-8').split('value')[1].replace('\n', '')
+        self.get_prod_magento_root()
+
+    def get_prod_magento_root(self):
+        prod_public_html = input(Colors.FG.Yellow + "Production Magento Root path: " + Colors.Reset)
+        if prod_public_html.endswith('/'):
+            path_length = len(prod_public_html)
+            self.settings_dict["prod_public_html"] = prod_public_html[:path_length - 1]
+        elif prod_public_html == "":
+            print(Colors.BG.Red + "Must enter a path.." + Colors.Reset)
+            self.get_prod_magento_root()
+        else:
+            self.settings_dict["prod_public_html"] = prod_public_html
+
         self.get_prod_ssh_host()
 
     def get_prod_ssh_host(self):
@@ -216,18 +263,61 @@ class UserInput:
         print(Colors.FG.Yellow + "Add SSH User " + Colors.Reset + Colors.FG.LightGreen + self.settings_dict[
             "prod_ssh_user"] + Colors.Reset + Colors.FG.Yellow + " to Production whitelist and add IP address: " + Colors.Reset + Colors.FG.LightGreen + dev_ip + Colors.Reset)
         input(Colors.FG.Yellow + "Press Any Key to continue..." + Colors.Reset)
-        self.get_prod_magento_root()
+        self.check_if_root_is_symlink()
 
-    def get_prod_magento_root(self):
-        prod_public_html = input(Colors.FG.Yellow + "Production Magento Root path: " + Colors.Reset)
-        if prod_public_html.endswith('/'):
-            path_length = len(prod_public_html)
-            self.settings_dict["prod_public_html"] = prod_public_html[:path_length - 1]
+    def check_if_root_is_symlink(self):
+        check_root_symlink = os.popen(
+            "ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict[
+                "prod_ssh_user"] + "@" + self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
+                "prod_ssh_port"] + " 'stat " + self.settings_dict[
+                "prod_public_html"] + " | head -n1 > sym_check.log; cat sym_check.log").read()
+        os.popen("ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict[
+            "prod_ssh_user"] + "@" + self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
+                     "prod_ssh_port"] + " 'rm sym_check.log'")
+        cred_file = open("sym_remote_check.log", "w")
+        cred_file.write(check_root_symlink)
+        cred_file.close()
+        is_symlink = os.popen("cat sym_remote_check.log | awk '{print $3}'").read()
+        if is_symlink == "->\n":
+            self.settings_dict["root_is_symlink"] = True
+            new = self.settings_dict["prod_public_html"].split("/")
+            for l in new:
+                if l == "":
+                    new.remove(l)
+            new_path = "/"
+            list_length = len(new) - 1
+            for l in range(list_length):
+                new_path += new[l] + "/"
+
+            dump_root_symlink = os.popen(
+                "ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict[
+                    "prod_ssh_user"] + "@" + self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
+                    "prod_ssh_port"] + " 'find " + new_path + " -type l -ls > root_link.log; cat root_link.log").read()
+            os.popen("ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict[
+                "prod_ssh_user"] + "@" + self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
+                         "prod_ssh_port"] + " 'rm root_link.log'")
+            cred_file = open("remote_root_link.log", "w")
+            cred_file.write(dump_root_symlink)
+            cred_file.close()
+            symlinks_found = os.popen("cat remote_root_link.log | awk '{print $11, $13}'").read()
+            folders = symlinks_found.split("\n")
+            for f in folders:
+                if f == "":
+                    continue
+                if f.startswith("."):
+                    continue
+                full_folder_path = f.split()[0]
+                full_link_path = f.split()[1]
+                if full_folder_path.startswith("/"):
+                    if full_folder_path == self.settings_dict["prod_public_html"]:
+                        self.settings_dict["root_symlink"] = {"folder_path": full_folder_path,
+                                                              "link_path": full_link_path}
+                self.get_prod_symlinks_inside_root_magento()
         else:
-            self.settings_dict["prod_public_html"] = prod_public_html
-        self.get_prod_symlinks()
+            self.settings_dict["root_is_symlink"] = False
+            self.get_prod_symlinks_inside_root_magento()
 
-    def get_prod_symlinks(self):
+    def get_prod_symlinks_inside_root_magento(self):
         dump_symlinks = os.popen(
             "ssh -i " + self.settings_dict["prod_ssh_privkey_path"] + " " + self.settings_dict["prod_ssh_user"] + "@" +
             self.settings_dict["prod_ssh_host"] + " -p" + self.settings_dict[
